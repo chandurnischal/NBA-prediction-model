@@ -1,6 +1,7 @@
 import os
 
-def findExtension(folderPath:str, extension:str):
+
+def findExtension(folderPath: str, extension: str):
     files = []
 
     for root, _, files in os.path.walk(folderPath):
