@@ -1,12 +1,9 @@
 import os
 
 
-def findExtension(folderPath: str, extension: str):
-    files = []
-
-    for root, _, files in os.path.walk(folderPath):
-        for file in files:
-            if file.endswith(extension):
-                files.append(os.path.join(root, file))
+def findExtension(folderPath: str, extension: str) -> list:
+    files = [os.path.join(root, filename) 
+                for root, _, filenames in os.walk(folderPath) 
+                    for filename in filenames if filename.endswith(extension)]
 
     return files

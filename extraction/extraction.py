@@ -155,3 +155,60 @@ class Teams:
 
     def perPossStats(self, year: int) -> pd.DataFrame:
         return self.__tableExtractor(mode="per_poss-team", year=year)
+
+    def __conferenceTableRemover(self, table) -> pd.DataFrame:
+        columns = ["Team"] + table.find("thead").text.strip().split("\n")[1:]
+
+        eTableRows = table.find("tbody").find_all("tr")
+
+        eRows = []
+
+        for tableRow in eTableRows:
+            row = []
+            th = tableRow.find("th").text.strip()
+            row.append(th)
+            trs = tableRow.find_all("td")
+
+            for tr in trs:
+                row.append(tr.text)
+
+            eRows.append(row)
+
+        conf = pd.DataFrame(eRows, columns=columns)
+        return conf
+
+    def conferenceStandings(self, year: int) -> pd.DataFrame:
+        url = "https://www.basketball-reference.com/leagues/NBA_{}.html".format(year)
+
+        r = requests.get(url)
+
+        soup = BeautifulSoup(r.content, "lxml")
+        remove = soup.find_all("tr", class_="thead")
+
+        for r in remove:
+            r.decompose()
+
+        eTable = soup.find("table", id="divs_standings_E")
+        wTable = soup.find("table", id="divs_standings_W")
+        eConf = self.__conferenceTableRemover(eTable)
+        wConf = self.__conferenceTableRemover(wTable)
+        eConf["conf"] = "E"
+        wConf["conf"] = "W"
+
+        data = pd.concat([eConf, wConf]).reset_index()
+
+        del data["index"]
+        data["Year"] = year
+        return data
+
+    def removeHyphen(data:pd.DataFrame) -> pd.DataFrame:
+        data = data.replace(to_replace="—", value=None)
+
+        columns = data.columns.to_list()
+
+        for column in columns:
+            try:
+                data[column] = data[column].astype(float)
+            except:
+                pass
+        return data
