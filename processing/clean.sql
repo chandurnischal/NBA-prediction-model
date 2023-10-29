@@ -1,9 +1,10 @@
 -- processing abbreviation table
 
+ALTER TABLE abbrev CHANGE COLUMN Nicknames Nickname text;
 alter table abbrev modify Team text not null;
-alter table abbrev modify Nicknames text not null;
-update abbrev set Team = trim(Team), Nicknames = time(Nicknames);
-alter table abbrev modify Nicknames varchar(3);
+alter table abbrev modify Nickname text not null;
+update abbrev set Team = trim(Team), Nickname = time(Nickname);
+alter table abbrev modify Nickname varchar(3);
 ALTER TABLE abbrev ADD COLUMN ID INT AUTO_INCREMENT PRIMARY KEY;
 
 -- processing team_total
@@ -66,7 +67,7 @@ alter table team_total drop column `Tm`;
 update team_total set `Team` = `Tm` where `Team` is null and `Tm` is not null;
 update team_total set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
 alter table team_total add column `nickname` varchar(3) not null;
-update team_total a join abbrev b on a.Team = b.Team set a.Nickname = b.Nicknames;
+update team_total a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
 alter table team_total drop column `Tm`;
 alter table team_total add column `team_id` integer not null;
 update team_total a join abbrev b on a.Team = b.Team set a.team_id = b.ID;
@@ -134,7 +135,7 @@ alter table team_per_game drop column `Tm`;
 update team_per_game set `Team` = `Tm` where `Team` is null and `Tm` is not null;
 update team_per_game set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
 alter table team_per_game add column `nickname` varchar(3) not null;
-update team_per_game a join abbrev b on a.Team = b.Team set a.Nickname = b.Nicknames;
+update team_per_game a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
 alter table team_per_game drop column `Tm`;
 alter table team_per_game add column `team_id` integer not null;
 update team_per_game a join abbrev b on a.Team = b.Team set a.team_id = b.ID;
@@ -202,7 +203,7 @@ alter table team_per_possession drop column `Tm`;
 update team_per_possession set `Team` = `Tm` where `Team` is null and `Tm` is not null;
 update team_per_possession set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
 alter table team_per_possession add column `nickname` varchar(3) not null;
-update team_per_possession a join abbrev b on a.Team = b.Team set a.Nickname = b.Nicknames;
+update team_per_possession a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
 alter table team_per_possession drop column `Tm`;
 alter table team_per_possession add column `team_id` integer not null;
 update team_per_possession a join abbrev b on a.Team = b.Team set a.team_id = b.ID;
@@ -211,7 +212,7 @@ CREATE INDEX idx_team_id ON team_per_possession(team_id);
 
 
 -- processing team_v_team
-update team_v_team a join abbrev b on a.Team = b.Team set a.Team = b.Nicknames;
+update team_v_team a join abbrev b on a.Team = b.Team set a.Team = b.Nickname;
 
 -- create a new table with unique player names
 
@@ -279,7 +280,7 @@ update player_total pt join player_unique up on pt.Player = up.player_name set p
 
 update player_total set Tm = trim(Tm);
 alter table player_total add team_id INTEGER not null;
-update player_total pt join abbrev up on pt.Tm = up.Nicknames set pt.team_id = up.id;
+update player_total pt join abbrev up on pt.Tm = up.Nickname set pt.team_id = up.id;
 
 CREATE INDEX idx_player_id ON player_total (player_id);
 CREATE INDEX idx_team_id ON player_total (team_id);
@@ -347,7 +348,7 @@ update player_per_game pt join player_unique up on pt.Player = up.player_name se
 
 update player_per_game set Tm = trim(Tm);
 alter table player_per_game add team_id INTEGER not null;
-update player_per_game pt join abbrev up on pt.Tm = up.Nicknames set pt.team_id = up.id;
+update player_per_game pt join abbrev up on pt.Tm = up.Nickname set pt.team_id = up.id;
 
 CREATE INDEX idx_player_id ON player_per_game (player_id);
 CREATE INDEX idx_team_id ON player_per_game (team_id);
@@ -416,7 +417,7 @@ update player_per_minute pt join player_unique up on pt.Player = up.player_name 
 
 update player_per_minute set Tm = trim(Tm);
 alter table player_per_minute add team_id INTEGER not null;
-update player_per_minute pt join abbrev up on pt.Tm = up.Nicknames set pt.team_id = up.id;
+update player_per_minute pt join abbrev up on pt.Tm = up.Nickname set pt.team_id = up.id;
 
 CREATE INDEX idx_player_id ON player_per_minute (player_id);
 CREATE INDEX idx_team_id ON player_per_minute (team_id);
@@ -486,7 +487,7 @@ update player_per_possession pt join player_unique up on pt.Player = up.player_n
 
 update player_per_possession set Tm = trim(Tm);
 alter table player_per_possession add team_id INTEGER not null;
-update player_per_possession pt join abbrev up on pt.Tm = up.Nicknames set pt.team_id = up.id;
+update player_per_possession pt join abbrev up on pt.Tm = up.Nickname set pt.team_id = up.id;
 
 CREATE INDEX idx_player_id ON player_per_possession (player_id);
 CREATE INDEX idx_team_id ON player_per_possession (team_id);
@@ -554,7 +555,40 @@ update player_advanced pt join player_unique up on pt.Player = up.player_name se
 
 update player_advanced set Tm = trim(Tm);
 alter table player_advanced add team_id INTEGER not null;
-update player_advanced pt join abbrev up on pt.Tm = up.Nicknames set pt.team_id = up.id;
+update player_advanced pt join abbrev up on pt.Tm = up.Nickname set pt.team_id = up.id;
 
 CREATE INDEX idx_player_id ON player_advanced (player_id);
 CREATE INDEX idx_team_id ON player_advanced (team_id);
+
+ALTER TABLE games CHANGE COLUMN date datetime text;
+
+DELETE FROM games where datetime = 'Playoffs';
+
+ALTER TABLE games ADD COLUMN day VARCHAR(3), ADD COLUMN date DATE;
+
+UPDATE games SET day = DATE_FORMAT(STR_TO_DATE(datetime, '%a, %b %d, %Y'), '%a'), date = STR_TO_DATE(datetime, '%a, %b %d, %Y');
+
+alter table games drop column datetime;
+
+update games set Visitor = trim(Visitor);
+update games set Home = trim(Home);
+
+alter table games add column visitor_id integer;
+alter table games add column home_id integer;
+update games a join abbrev b on a.Visitor = b.Team set a.visitor_id = b.id;
+update games a join abbrev b on a.Home = b.Team set a.home_id = b.id;
+
+
+CREATE INDEX idx_visitor_id ON games (visitor_id);
+CREATE INDEX idx_home_id ON games (home_id);
+
+
+update games a join abbrev b on a.Visitor_id = b.id set a.Visitor = b.Nickname;
+update games a join abbrev b on a.Home_id = b.id set a.Home = b.Nickname;
+
+alter table games MODIFY `VPoints` INTEGER;
+alter table games MODIFY `HPoints` INTEGER;
+
+UPDATE games SET `Attend` = NULL WHERE `Attend` = '';
+update games set `Attend` =  REPLACE(`Attend`, ',', '') where `Attend` like '%,%';
+alter table games MODIFY `Attend` INTEGER;
