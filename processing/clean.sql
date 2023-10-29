@@ -36,7 +36,6 @@ update team_total set `PTS` = null where `PTS` = '';
 update team_total set `Tm` = null where `Tm` = '';
 
 alter table team_total modify `Rk` INTEGER;
-alter table team_total modify `Team` text;
 alter table team_total modify `G` INTEGER;
 alter table team_total modify `MP` INTEGER;
 alter table team_total modify `FG` INTEGER;
@@ -61,10 +60,10 @@ alter table team_total modify `TOV` INTEGER;
 alter table team_total modify `PF` INTEGER;
 alter table team_total modify `PTS` INTEGER;
 alter table team_total modify `Year` INTEGER;
+update team_total set `Team` = `Tm` where `Team` is null and `Tm` is not null;
+
 alter table team_total drop column `Tm`;
 
-
-update team_total set `Team` = `Tm` where `Team` is null and `Tm` is not null;
 update team_total set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
 alter table team_total add column `nickname` varchar(3) not null;
 update team_total a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
@@ -104,7 +103,6 @@ update team_per_game set `PTS` = null where `PTS` = '';
 update team_per_game set `Tm` = null where `Tm` = '';
 
 alter table team_per_game modify `Rk` INTEGER;
-alter table team_per_game modify `Team` text;
 alter table team_per_game modify `G` INTEGER;
 alter table team_per_game modify `MP` INTEGER;
 alter table team_per_game modify `FG` INTEGER;
@@ -129,10 +127,11 @@ alter table team_per_game modify `TOV` INTEGER;
 alter table team_per_game modify `PF` INTEGER;
 alter table team_per_game modify `PTS` INTEGER;
 alter table team_per_game modify `Year` INTEGER;
+update team_per_game set `Team` = `Tm` where `Team` is null and `Tm` is not null;
+
 alter table team_per_game drop column `Tm`;
 
 
-update team_per_game set `Team` = `Tm` where `Team` is null and `Tm` is not null;
 update team_per_game set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
 alter table team_per_game add column `nickname` varchar(3) not null;
 update team_per_game a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
@@ -172,7 +171,6 @@ update team_per_possession set `PTS` = null where `PTS` = '';
 update team_per_possession set `Tm` = null where `Tm` = '';
 
 alter table team_per_possession modify `Rk` INTEGER;
-alter table team_per_possession modify `Team` text;
 alter table team_per_possession modify `G` INTEGER;
 alter table team_per_possession modify `MP` INTEGER;
 alter table team_per_possession modify `FG` INTEGER;
@@ -197,10 +195,11 @@ alter table team_per_possession modify `TOV` INTEGER;
 alter table team_per_possession modify `PF` INTEGER;
 alter table team_per_possession modify `PTS` INTEGER;
 alter table team_per_possession modify `Year` INTEGER;
+update team_per_possession set `Team` = `Tm` where `Team` is null and `Tm` is not null;
+
 alter table team_per_possession drop column `Tm`;
 
 
-update team_per_possession set `Team` = `Tm` where `Team` is null and `Tm` is not null;
 update team_per_possession set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
 alter table team_per_possession add column `nickname` varchar(3) not null;
 update team_per_possession a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
