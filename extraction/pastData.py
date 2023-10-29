@@ -151,26 +151,26 @@ def gamesSchedule(year):
 
 for year in tqdm(range(*years)):
     try:
-        # playerTotalStats(year)
+        playerTotalStats(year)
 
-        # playerPerGameStats(year)
+        playerPerGameStats(year)
 
-        # playerPerMinuteStats(year)
+        playerPerMinuteStats(year)
 
-        # playerPerPossStats(year)
+        playerPerPossStats(year)
 
-        # playerAdvancedStats(year)
+        playerAdvancedStats(year)
 
         teamPerGameStats(year)
 
-        # teamPerPossessionStats(year)
+        teamPerPossessionStats(year)
 
-        # teamTotalStats(year)
+        teamTotalStats(year)
 
-        # teamVteam(year)
-        # gamesSchedule(year)
+        teamVteam(year)
+
+        gamesSchedule(year)
 
 
     except Exception as e:
         print(year, e.__class__)
-
