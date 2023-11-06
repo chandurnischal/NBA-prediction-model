@@ -597,7 +597,7 @@ alter table games MODIFY `Attend` INTEGER;
 alter table games add column `mov` integer;
 update games set `mov`=Hpoints-VPoints;
 alter table games add column `home_victory` bit(1);
-update games set `home_victory` = `mov` > 0
+update games set `home_victory` = `mov` > 0;
 
 -- processing conference standings
 
