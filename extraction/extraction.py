@@ -166,43 +166,6 @@ class Teams:
     def perPossStats(self, year: int) -> pd.DataFrame:
         return self.__tableExtractor(mode="per_poss-team", year=year)
 
-    def teamVteam(self, year: int) -> pd.DataFrame:
-        url = (
-            "https://www.basketball-reference.com/leagues/NBA_{}_standings.html".format(
-                year
-            )
-        )
-
-        r = requests.get(url)
-        soup = BeautifulSoup(r.content, "lxml")
-        table = soup.find(id="team_vs_team")
-
-        if table == None:
-            soup = BeautifulSoup("\n".join(soup.find_all(string=Comment)), "lxml")
-
-        table = soup.find(id="team_vs_team")
-
-        columns = table.find("thead").text.strip().split("\n")[1:]
-
-        tbody = table.find("tbody")
-
-        tableRows = tbody.find_all("tr")
-
-        rows = []
-        for tableRow in tableRows:
-            row = []
-
-            tds = tableRow.find_all("td")
-
-            for td in tds:
-                row.append(td.text.strip())
-
-            rows.append(row)
-
-        data = pd.DataFrame(rows, columns=columns)
-        data["Year"] = year
-        return data
-
     def __conferenceTableRemover(self, table) -> pd.DataFrame:
         columns = ["Team"] + table.find("thead").text.strip().split("\n")[1:]
 

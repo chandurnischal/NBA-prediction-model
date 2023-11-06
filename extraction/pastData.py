@@ -138,12 +138,6 @@ def teamPerPossessionStats(year):
     pd.concat(output).to_sql(name="team_per_possession", index=False, con=engine, if_exists="append")
 
 
-def teamVteam(year):
-
-    team[0].teamVteam(year).to_sql(name="team_v_team", index=False, con=engine, if_exists="append")
-    sleep(randint(10, 20))
-
-
 
 def gamesSchedule(year):
     games.seasonSchedule(year).to_sql(name="games", index=False, con=engine, if_exists="append")
@@ -166,8 +160,6 @@ for year in tqdm(range(*years)):
         teamPerPossessionStats(year)
 
         teamTotalStats(year)
-
-        teamVteam(year)
 
         gamesSchedule(year)
 
