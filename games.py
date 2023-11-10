@@ -1,11 +1,10 @@
 import mysql.connector as mc
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LinearRegression
 
 creds = {
     "host": "localhost", 
-    "password": "ChatGPT132!",
+    "password": "Chatgpt132",
     "user": "root",
     "database": "nba"
 }
