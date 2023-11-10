@@ -26,12 +26,13 @@ data.columns = [c.lower() for c in data.columns.to_list()]
 elo_ratings = {team: 1500 for team in set(data['home']) | set(data['visitor'])}
 
 elo_list = []
-homeelolist = []
-visitorelolist = []
+home_elo_list = []
+visitor_elo_list = []
 
 for index, row in data.iterrows():
     home = row['home']
     visitor = row['visitor']
+
     home_elo = elo_ratings[home]
     away_elo = elo_ratings[visitor]
 
@@ -39,18 +40,21 @@ for index, row in data.iterrows():
     E_away = 1 - E_home
 
     k = 20 * ((abs(row['mov']) + 3) ** 0.8) / (7.5 + 0.006 * (abs(home_elo - away_elo)))
+    
     home_score = 1 if row['hpoints'] > row['vpoints'] else 0.5
     away_score = 1 - home_score
+    
     new_home_elo = round(home_elo + k * (home_score - E_home), 2)
     new_away_elo = round(away_elo + k * (away_score - E_away), 2)
 
     elo_ratings[home] = new_home_elo
     elo_ratings[visitor] = new_away_elo
-    homeelolist.append(new_home_elo)
-    visitorelolist.append(new_away_elo)
+    
+    home_elo_list.append(new_home_elo)
+    visitor_elo_list.append(new_away_elo)
 
-data['home_elo'] = homeelolist
-data['visitor_elo'] = visitorelolist
+data['home_elo'] = home_elo_list
+data['visitor_elo'] = visitor_elo_list
 
 print(data)
 
