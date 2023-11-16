@@ -67,6 +67,7 @@ def PER(row) -> float:
             - row['tov'] * 53.897) * (1 / row['mp'])
 
 def efficiencyTablePerPlayer(player_id:int, is_regular:int) -> pd.DataFrame:
+    
     if is_regular != 0 | is_regular != 1:
         return None
 
@@ -102,7 +103,14 @@ with open("ids.txt", "a") as file:
             if df.empty == False:
                 df.to_sql(name="player_efficiency", con=engine, index=False, if_exists="append")
             else:
-                file.write('{}, {}\n'.format(id, "empty DF"))
+                file.write('{}, {}, {}\n'.format(id, 0, "empty DF"))
+
+            df = efficiencyTablePerPlayer(id, 1)            
+            if df.empty == False:
+                df.to_sql(name="player_efficiency", con=engine, index=False, if_exists="append")
+            else:
+                file.write('{}, {}, {}\n'.format(id, 1, "empty DF"))
+
+
         except Exception as e:
             file.write('{}, {}\n'.format(id, e.__class__))
-
