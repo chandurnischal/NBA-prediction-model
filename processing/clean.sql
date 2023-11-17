@@ -637,6 +637,12 @@ alter table games MODIFY `Attend` INTEGER;
 alter table games add column `mov` integer;
 update games set `mov`=Hpoints-VPoints;
 
+alter table games add column playoff_start_date date;
+update games a join playoffs_dates b on a.season = b.year set playoff_start_date = b.start_date;
+update games set is_regular = 1 where date < playoff_start_date;
+update games set is_regular = 0 where date >= playoff_start_date;
+alter table drop column playoff_start_date;
+
 -- processing conference standings
 
 update conference_standings set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';

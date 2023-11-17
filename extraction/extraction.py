@@ -255,7 +255,7 @@ class Games:
             rows.append(row)
 
         data = pd.DataFrame(rows, columns=thead)
-        unwanted = ['Start (ET)', '\xa0', '\xa0', 'Notes']
+        unwanted = ['Start (ET)', '\xa0', '\xa0']
 
 
         for u in unwanted:
@@ -265,7 +265,7 @@ class Games:
                 pass
 
         oldColumns = data.columns.to_list()
-        requiredColumns = ["Date", "Visitor", "VPoints", "Home", "HPoints", "Attend", "Arena"]
+        requiredColumns = ["Date", "Visitor", "VPoints", "Home", "HPoints", "Attend", "Arena", "Notes"]
         renameCols = dict.fromkeys(oldColumns, None)
 
         for i in range(len(oldColumns)):
@@ -286,9 +286,58 @@ class Games:
 
         dataList = []
 
-        for month in urls:
+        for month in tqdm(urls):
             dataList.append(self.monthlySchedule(month["href"]))
             sleep(randint(5, 10))
 
         data = pd.concat(dataList)
+
+        # playInIndex = data.index[data['Notes'] == 'Play-In Game'].to_list()[-1]
+        # n = len(data.index)
+
+        # is_regular = [1 if i <= playInIndex else 0 for i in range(n)]
+
+        # data['is_regular'] = is_regular
+
+        data = data.drop('Notes', axis=1)
         return data
+
+    def playoffsDates(self, dateRange) -> pd.DataFrame:
+        url = '''
+        https://www.basketball-reference.com/playoffs/series.html#playoffs_series
+        '''
+
+        r = requests.get(url)
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find(id = "playoffs_series")
+        tbody = table.find("tbody")
+
+        trs = tbody.find_all("tr")
+        rows = []
+
+        for tr in trs:
+            row = []
+            th = tr.find("th").text.strip()
+            row.append(th)
+
+            tds = tr.find_all("td")
+
+            for td in tds:
+                row.append(td.text)
+            
+            rows.append(row)
+
+        data = pd.DataFrame(rows)
+        data = data[data[1] == "NBA"]
+
+        data[3] = data[3].replace('\s+\-.+', '', regex=True)
+        data[3] = data[3] + ', ' + data[0].astype(str)
+        data[3] = pd.to_datetime(data[3], format='%b %d, %Y')
+        rows = []
+        for year in range(*dateRange):
+            smallData = data[data[3].dt.year == year]
+            row = [year, smallData[3].min()]
+
+            rows.append(row)
+
+        return pd.DataFrame(rows, columns=['year', 'start_date'])
