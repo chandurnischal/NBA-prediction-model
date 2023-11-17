@@ -27,7 +27,7 @@ def plotFranchiseElo(franchiseID:int) -> None:
     data = u.sqlTodf(query, creds)
 
     elo = getFranchiseElo(franchiseID, data)
-    franchiseName = data[data['home_fid'] == franchiseID].iloc[0]['home']
+    franchiseName = data[data['home_fid'] == franchiseID].iloc[-1]['home']
     plt.plot(data['date'], elo, label = franchiseName)
 
 def compareFranchiseElos(franchisIDs:list) -> None:
@@ -64,7 +64,7 @@ def plotTeamElo(teamID:int) -> None:
     data = u.sqlTodf(query, creds)
 
     elo = getFranchiseElo(teamID, data)
-    teamName = data[data['home_id'] == teamID].iloc[0]['home']
+    teamName = data[data['home_id'] == teamID].iloc[-1]['home']
     plt.plot(data['date'], elo, label = teamName)
 
 def compareTeamElos(teamIDS:list) -> None:
@@ -75,3 +75,7 @@ def compareTeamElos(teamIDS:list) -> None:
     plt.legend()
     plt.grid('--')
     plt.show()
+
+ids = [24]
+# compareTeamElos(ids)
+compareFranchiseElos(ids)

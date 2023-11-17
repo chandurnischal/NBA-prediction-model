@@ -1,3 +1,7 @@
+'''
+defunct. kept just in case
+'''
+
 import utils as u
 import json
 import pandas as pd
@@ -91,7 +95,7 @@ query = '''
 select * from player_unique
 '''
 
-engine = create_engine("mysql://root:root@localhost/nba")
+engine = create_engine("mysql://{}:{}@{}/{}")
 
 data = u.sqlTodf(query, creds)
 ids = list(data['id'])

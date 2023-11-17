@@ -43,9 +43,9 @@ for index, row in tqdm(data.iterrows()):
 
 data['home_elo'] = homeEloList
 data['visitor_elo'] = visitorEloList
+data = data[['date', 'day', 'season', 'home_id', 'home_fid', 'visitor_id', 'visitor_fid', 'home', 'hpoints', 'home_elo', 'visitor', 'vpoints', 'visitor_elo', 'mov']]
 
 from sqlalchemy import create_engine
 
 engine = create_engine("mysql://root:root@localhost/nba")
-data = data[['date', 'day', 'home_id', 'home_fid', 'visitor_id', 'visitor_fid', 'home', 'hpoints', 'home_elo', 'visitor', 'vpoints', 'visitor_elo', 'mov']]
-data.to_sql(name="elo", con=engine, index=False, if_exists="append")
+data.to_sql(name="elo", con=engine, index=False, if_exists="replace")
