@@ -43,7 +43,7 @@ for index, row in tqdm(data.iterrows()):
 
 data['home_elo'] = homeEloList
 data['visitor_elo'] = visitorEloList
-data = data[['date', 'day', 'season', 'home_id', 'home_fid', 'visitor_id', 'visitor_fid', 'home', 'hpoints', 'home_elo', 'visitor', 'vpoints', 'visitor_elo', 'mov']]
+data = data[['date', 'season', 'is_regular', 'home_id', 'home_fid', 'visitor_id', 'visitor_fid', 'home', 'hpoints', 'home_elo', 'visitor', 'vpoints', 'visitor_elo', 'mov']]
 
 from sqlalchemy import create_engine
 
