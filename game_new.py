@@ -14,7 +14,7 @@ creds = {
 with mc.connect(**creds) as conn:
     cur = conn.cursor()
 
-    query = '''select home, visitor, hpoints, vpoints, mov, date from games order by year(date)'''
+    query = '''select * from games order by year(date)'''
 
     cur.execute(query)
 
