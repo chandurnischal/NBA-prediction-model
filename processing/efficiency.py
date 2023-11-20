@@ -1,6 +1,7 @@
-import utils as u
 import json
 from sqlalchemy import create_engine
+import mysql.connector as mc
+import pandas as pd
 
 with open("creds.json") as file:
     creds = json.load(file)
@@ -32,17 +33,25 @@ def PER(row) -> float:
             - row['tov'] * 53.897) * (1 / row['mp'])
 
 
-query = '''
-select * from team_total
-'''
+with mc.connect(**creds) as conn:
+    cur = conn.cursor()
 
-data = u.sqlTodf(query, creds)
-data.columns = [column.lower() for column in data.columns]
+    query = '''
+    select * from team_total
+    '''
 
-data['per'] = PER(data)
-data['eff'] = EFF(data)
+    cur.execute(query)
+    column_names = [column[0] for column in cur.description]
+    rows = cur.fetchall()
 
-from sqlalchemy import create_engine
 
-engine = create_engine("mysql://root:root@localhost/nba")
-data.to_sql(name="team_efficiency", index=False, con=engine, if_exists="replace")
+    data = pd.DataFrame(rows, columns=column_names)
+    data.columns = [column.lower() for column in data.columns]
+
+    data['per'] = PER(data)
+    data['eff'] = EFF(data)
+
+    from sqlalchemy import create_engine
+
+    engine = create_engine("mysql://root:root@localhost/nba")
+    data.to_sql(name="team_efficiency", index=False, con=engine, if_exists="replace")

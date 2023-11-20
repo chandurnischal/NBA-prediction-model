@@ -13,6 +13,7 @@ alter table abbrev add column franchiseID int;
 update abbrev a join franchises b on a.franchise = b.franchise set a.franchiseID = b.franchiseID;
 drop table franchises;
 drop table team_v_team;
+
 -- processing team_total
 
 update team_total set `Rk` = null where `Rk` = '';              
@@ -639,9 +640,10 @@ update games set `mov`=Hpoints-VPoints;
 
 alter table games add column playoff_start_date date;
 update games a join playoffs_dates b on a.season = b.year set playoff_start_date = b.start_date;
+alter table games add column is_regular int;
 update games set is_regular = 1 where date < playoff_start_date;
 update games set is_regular = 0 where date >= playoff_start_date;
-alter table drop column playoff_start_date;
+alter table games drop column playoff_start_date;
 
 -- processing conference standings
 
