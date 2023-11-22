@@ -3,16 +3,28 @@ import mysql.connector as mc
 import json
 from tqdm import tqdm 
 from time import perf_counter
+import subprocess
 
 start = perf_counter()
 
+with open("creds.json") as file:
+    creds = json.load(file)
+
 os.system("python processing/updateDB.py")
+
+dumpFilePath = 'data/latest_dump.sql'
+
+cmd = 'mysqldump --host={} --user={} --password={} {} > {}'.format(creds['host'], creds['user'], creds['password'], creds['database'], dumpFilePath)
+
+try:
+    subprocess.run(cmd, shell=True, check=True)
+    print('Successfully created SQL dump')
+except subprocess.CalledProcessError as e:
+    print('Error executing dump')
 
 with open('processing/clean.sql') as file:
     queries = file.readlines()
 
-with open("creds.json") as file:
-    creds = json.load(file)
 
 preprocessQueries = [
                     'create index home_idx on elo(home_id);', 
