@@ -601,7 +601,8 @@ CREATE INDEX idx_team_id ON player_advanced (team_id);
 ALTER TABLE games CHANGE COLUMN date datetime text;
 DELETE FROM games where datetime = 'Playoffs';
 ALTER TABLE games ADD COLUMN day VARCHAR(3), ADD COLUMN date DATE;
-UPDATE games SET day = DATE_FORMAT(STR_TO_DATE(datetime, '%a, %b %d, %Y'), '%a'), date = STR_TO_DATE(datetime, '%a, %b %d, %Y');
+UPDATE games SET day = DATE_FORMAT(STR_TO_DATE(datetime, '%a, %b %d, %Y'), '%a');
+update games set date = STR_TO_DATE(datetime, '%a, %b %d, %Y');
 alter table games drop column datetime;
 
 alter table games add column season int;
@@ -611,22 +612,21 @@ update games set season = year(date) where month(date) < 7;
 update games set Visitor = trim(Visitor);
 update games set Home = trim(Home);
 
-alter table games add column visitor_id integer;
-alter table games add column visitor_fid int;
 alter table games add column home_id integer;
 alter table games add column home_fid int;
+alter table games add column visitor_id integer;
+alter table games add column visitor_fid int;
 
-update games a join abbrev b on a.Visitor = b.Team set a.visitor_id = b.id;
 update games a join abbrev b on a.Home = b.Team set a.home_id = b.id;
-
+update games a join abbrev b on a.Visitor = b.Team set a.visitor_id = b.id;
 CREATE INDEX idx_visitor_id ON games (visitor_id);
 CREATE INDEX idx_home_id ON games (home_id);
 
+update games a join abbrev b on a.visitor_id = b.id set a.Visitor = b.Nickname;
+update games a join abbrev b on a.home_id = b.id set a.Home = b.Nickname;
+
 update games a join abbrev b on a.visitor_id = b.id set a.visitor_fid = b.franchiseID;
 update games a join abbrev b on a.home_id = b.id set a.home_fid = b.franchiseID;
-
-update games a join abbrev b on a.Visitor_id = b.id set a.Visitor = b.Nickname;
-update games a join abbrev b on a.Home_id = b.id set a.Home = b.Nickname;
 
 alter table games MODIFY `VPoints` INTEGER;
 alter table games MODIFY `HPoints` INTEGER;
@@ -638,16 +638,17 @@ alter table games MODIFY `Attend` INTEGER;
 alter table games add column `mov` integer;
 update games set `mov`=Hpoints-VPoints;
 
-alter table games add column playoff_start_date date;
-update games a join playoffs_dates b on a.season = b.year set playoff_start_date = b.start_date;
+alter table games add column playoff_date date;
+update games a join playoffs_dates b on a.season = b.year set a.playoff_date = b.start_date;
 alter table games add column is_regular int;
-update games set is_regular = 1 where date < playoff_start_date;
-update games set is_regular = 0 where date >= playoff_start_date;
-alter table games drop column playoff_start_date;
+update games set is_regular = 1 where date < playoff_date;
+update games set is_regular = 1 where playoff_date is null;
+update games set is_regular = 0 where date >= playoff_date;
 
 -- processing conference standings
 
-update conference_standings set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
+update conference_standings set `Team` =  REPLACE(`Team`, '*', '');
+update conference_standings set `Team` =  REGEXP_REPLACE(`Team`, '\\([0-9]+\\)', '');
 update conference_standings  set `Team` = trim(`Team`);
 update conference_standings set `GB` = null WHERE `GB` like '%???%';
 

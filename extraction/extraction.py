@@ -62,54 +62,69 @@ class Players:
         return data
 
     def totalStats(self, year: int) -> pd.DataFrame:
-        url = self.__baseURL + "NBA_{}_totals.html".format(year)
-        r = requests.get(url)
-        data = self.__tableExtractor(r, "totals_stats")
+        try:
+            url = self.__baseURL + "NBA_{}_totals.html".format(year)
+            r = requests.get(url)
+            data = self.__tableExtractor(r, "totals_stats")
 
-        data["Year"] = year
+            data["Year"] = year
 
-        return data
-
+            return data
+        except:
+            return None
+        
     def perGameStats(self, year: int) -> pd.DataFrame:
-        url = self.__baseURL + "NBA_{}_per_game.html".format(year)
+        try:
+            url = self.__baseURL + "NBA_{}_per_game.html".format(year)
 
-        r = requests.get(url)
-        data = self.__tableExtractor(r, "per_game_stats")
+            r = requests.get(url)
+            data = self.__tableExtractor(r, "per_game_stats")
 
-        data["Year"] = year
+            data["Year"] = year
 
-        return data
-
+            return data
+        except:
+            return None
+        
     def perMinuteStats(self, year: int) -> pd.DataFrame:
-        url = self.__baseURL + "NBA_{}_per_minute.html".format(year)
+        try:
+            url = self.__baseURL + "NBA_{}_per_minute.html".format(year)
 
-        r = requests.get(url)
+            r = requests.get(url)
 
-        data = self.__tableExtractor(r, "per_minute_stats")
+            data = self.__tableExtractor(r, "per_minute_stats")
 
-        data["Year"] = year
+            data["Year"] = year
 
-        return data
+            return data
+        except:
+            return None
 
     def perPossessionStats(self, year: int) -> pd.DataFrame:
-        url = self.__baseURL + "NBA_{}_per_poss.html".format(year)
-        r = requests.get(url)
+        try:
+            url = self.__baseURL + "NBA_{}_per_poss.html".format(year)
+            r = requests.get(url)
 
-        data = self.__tableExtractor(r, "per_poss_stats")
+            data = self.__tableExtractor(r, "per_poss_stats")
 
-        data["Year"] = year
-        return data
+            data["Year"] = year
+            return data
+        except:
+            return None
+
 
     def advancedStats(self, year: int) -> pd.DataFrame:
-        url = self.__baseURL + "NBA_{}_advanced.html".format(year)
-        r = requests.get(url)
+        try:
+            url = self.__baseURL + "NBA_{}_advanced.html".format(year)
+            r = requests.get(url)
 
-        data = self.__tableExtractor(r, "advanced_stats")
+            data = self.__tableExtractor(r, "advanced_stats")
 
-        data["Year"] = year
+            data["Year"] = year
 
-        return data
-
+            return data
+        except:
+            return None
 
 class Teams:
     def __init__(self, type: str) -> None:
@@ -158,13 +173,23 @@ class Teams:
         return data
 
     def totalStats(self, year: int) -> pd.DataFrame:
-        return self.__tableExtractor(mode="totals-team", year=year)
+        try:
+            return self.__tableExtractor(mode="totals-team", year=year)
 
+        except:
+            return None
+        
     def perGameStats(self, year: int) -> pd.DataFrame:
-        return self.__tableExtractor(mode="per_game-team", year=year)
+        try:
+            return self.__tableExtractor(mode="per_game-team", year=year)
+        except:
+            return None
 
     def perPossStats(self, year: int) -> pd.DataFrame:
-        return self.__tableExtractor(mode="per_poss-team", year=year)
+        try:
+            return self.__tableExtractor(mode="per_poss-team", year=year)
+        except:
+            return None
 
     def __conferenceTableRemover(self, table) -> pd.DataFrame:
         columns = ["Team"] + table.find("thead").text.strip().split("\n")[1:]
@@ -291,13 +316,6 @@ class Games:
             sleep(randint(5, 10))
 
         data = pd.concat(dataList)
-
-        # playInIndex = data.index[data['Notes'] == 'Play-In Game'].to_list()[-1]
-        # n = len(data.index)
-
-        # is_regular = [1 if i <= playInIndex else 0 for i in range(n)]
-
-        # data['is_regular'] = is_regular
 
         data = data.drop('Notes', axis=1)
         return data

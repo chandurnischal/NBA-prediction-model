@@ -7,7 +7,7 @@ import pandas as pd
 from tqdm import tqdm 
 
 
-with open("creds.json") as file:
+with open("../creds.json") as file:
     creds = json.load(file)
 
 
