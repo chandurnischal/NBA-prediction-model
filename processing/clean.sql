@@ -677,11 +677,8 @@ update conference_standings set `T` = `W` + `L`;
 alter table conference_standings add column `W%` DECIMAL(10, 2);
 update conference_standings set `W%` = CAST(`W` AS DECIMAL(10, 2)) * 100 / CAST(`T` AS DECIMAL(10, 2));
 
-alter table conference_standings add column `nickname` varchar(3) not null;
-update conference_standings a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
-alter table conference_standings add column `team_id` integer not null;
-update conference_standings a join abbrev b on a.Team = b.Team set a.team_id = b.ID;
-
-
-alter table conference_standings add column `franchise_id` integer not null;
-update conference_standings a join abbrev b on a.Team_id = b.id set a.franchise_id = b.franchiseid;
+alter table conference_standings add column team_id int, add column franchise_id int;
+CREATE INDEX idx_team_id ON conference_standings(team_id);
+update conference_standings a join abbrev b on a.Team = b.Team set a.team_id = b.id;
+update conference_standings a join abbrev b on a.team_id = b.id set a.franchise_id = b.franchiseID;
+update conference_standings a join abbrev b on a.team_id = b.id set a.Team = b.Nickname;
