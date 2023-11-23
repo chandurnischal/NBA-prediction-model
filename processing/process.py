@@ -1,4 +1,4 @@
 import os
 
-os.system("python processing/load.py")
-os.system("python processing/clean.py")
+os.system("python3 processing/load.py")
+os.system("python3 processing/clean.py")
