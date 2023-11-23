@@ -11,7 +11,7 @@ with open("../creds.json") as file:
     creds = json.load(file)
 
 
-engine = create_engine("mysql://{}:{}@{}/{}".format(creds["user"], creds["password"], creds["host"], creds["database"]))
+engine = create_engine("mysql+mysqlconnector://{}:{}@{}/{}".format(creds["user"], creds["password"], creds["host"], creds["database"]))
 player = e.Players("regular"), e.Players("playoffs")
 
 team = e.Teams("regular"), e.Teams("playoffs")

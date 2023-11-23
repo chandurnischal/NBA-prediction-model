@@ -7,7 +7,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from time import sleep
 from random import randint
-import subprocess
+import mysql.connector as mc
 
 def pushToDatabase(data:pd.DataFrame, tablename, engine) -> None:
     try:
@@ -93,7 +93,7 @@ def advancedStats(player, year:int, engine) -> None:
 with open("creds.json") as file:
     creds = json.load(file)
 
-engine = create_engine("mysql://{}:{}@{}/{}".format(creds["user"], creds["password"], creds["host"], creds["database"]))
+engine = create_engine("mysql+mysqlconnector://{}:{}@{}/{}".format(creds["user"], creds["password"], creds["host"], creds["database"]))
 
 games = e.Games()
 currentYear = datetime.now().year + 1
@@ -107,9 +107,6 @@ print("Extracting Games schedule...\n")
 currentSchedule = games.seasonSchedule(currentYear)
 currentSchedule = currentSchedule[currentSchedule['VPoints'] != '']
 pushToDatabase(currentSchedule, "games", engine)
-
-# with open("data/latest.sql", 'w') as output:
-#     c = subprocess.Popen(['mysqldump', '-u', creds['user'], '-p', creds['database']], stdout=output, stdin=creds['password'], shell=True)
 
 print("Extracting playoffs schedule...\n")
 games.playoffsDates((1980, currentYear)).to_sql("playoffs_dates", index = False, con=engine, if_exists = "replace")

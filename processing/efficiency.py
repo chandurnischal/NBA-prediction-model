@@ -53,5 +53,5 @@ with mc.connect(**creds) as conn:
 
     from sqlalchemy import create_engine
 
-    engine = create_engine("mysql://root:root@localhost/nba")
+    engine = create_engine("mysql+mysqlconnector://root:root@localhost/nba")
     data.to_sql(name="team_efficiency", index=False, con=engine, if_exists="replace")
