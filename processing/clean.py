@@ -10,7 +10,7 @@ start = perf_counter()
 with open("creds.json") as file:
     creds = json.load(file)
 
-os.system("python3 processing/updateDB.py")
+os.system("python processing/updateDB.py")
 
 dumpFilePath = 'data/latest_dump.sql'
 
@@ -52,8 +52,8 @@ with mc.connect(**creds) as conn:
         except:
             pass
 
-    os.system("python3 processing/elo.py")
-    os.system("python3 processing/efficiency.py")
+    os.system("python processing/elo.py")
+    os.system("python processing/efficiency.py")
     
     print("Processing data")
 
