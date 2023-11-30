@@ -1,0 +1,149 @@
+import mysql.connector as mc
+import pandas as pd
+import numpy as np 
+import matplotlib as plt
+from sqlalchemy import create_engine
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.model_selection import train_test_split
+
+creds = {
+    "host": "localhost", 
+    "password": "Chatgpt132",
+    "user": "root",
+    "database": "nba"
+}
+
+
+with mc.connect(**creds) as conn:
+    cur = conn.cursor()
+
+    query = '''select * from games order by year(date)'''
+
+    cur.execute(query)
+
+    column_names = [column[0] for column in cur.description]
+    rows = cur.fetchall()
+
+data = pd.DataFrame(rows, columns = column_names)
+data.columns = [c.lower() for c in data.columns.to_list()]
+
+elo_ratings = {team: 1500 for team in set(data['home']) | set(data['visitor'])}
+
+# elo_list = []
+home_elo_list = []
+visitor_elo_list = []
+ 
+for index, row in data.iterrows():
+    home = row['home']
+    visitor = row['visitor']
+
+    home_elo = elo_ratings[home]
+    away_elo = elo_ratings[visitor]
+
+    E_home = 1 / (1+ 10 ** ((away_elo - home_elo) / 400))
+    E_away = 1 - E_home
+
+    k = 20 * ((abs(row['mov']) + 3) ** 0.8) / (7.5 + 0.006 * (abs(home_elo - away_elo)))
+    
+    home_score = 1 if row['hpoints'] > row['vpoints'] else 0
+    away_score = 1 - home_score
+    
+    new_home_elo = round(home_elo + k * (home_score - E_home), 2)
+    new_away_elo = round(away_elo + k * (away_score - E_away), 2)
+
+    elo_ratings[home] = new_home_elo
+    elo_ratings[visitor] = new_away_elo
+    
+    home_elo_list.append(new_home_elo)
+    visitor_elo_list.append(new_away_elo)
+
+data['home_elo'] = home_elo_list
+data['visitor_elo'] = visitor_elo_list
+
+
+win_per = {team: 0 for team in set(data['home']) | set(data['visitor'])}
+
+
+home_win_list = []
+visitor_win_list = []
+ 
+for index, row in data.iterrows():
+    home = row['home']
+    visitor = row['visitor']
+
+    home_win = win_per[home]
+    away_win = win_per[visitor]
+
+    W_home = 1 if row['mov'] > 0 else 0
+    W_away = 1 - W_home   
+
+    total_home_win = home_win + W_home
+    total_away_win = away_win + W_away 
+
+    home_per = total_home_win / (total_home_win + total_away_win)
+    away_per = total_away_win / (total_home_win + total_away_win)
+
+    win_per[home] = home_per
+    win_per[visitor] = away_per
+
+    home_win_list.append(home_per)
+    visitor_win_list.append(away_per)
+
+data['home_win_percentage'] = home_win_list
+data['visitor_win_percentage'] = visitor_win_list
+
+
+win_loss = {team: 0 for team in set(data['home'])}
+home_win_prob = []
+
+for indez, row in data.iterrows():
+    home = row['home']
+    win_loss = 1 if row['mov'] > 0 else 0
+    home_win_prob.append(win_loss)
+
+data['win_prob'] = home_win_prob
+
+
+X = data[['home_elo', 'home_win_percentage', 'visitor_elo', 'visitor_win_percentage']]
+y = data['win_prob']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 1001)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+prediction = model.predict(X_test)
+
+print("Accuracy:", accuracy_score(y_test, prediction))
+print("Classification Report:\n", classification_report(y_test, prediction))
+
+new_data = pd.DataFrame({'home_elo': [1595], 'home_win_percentage': [0.092], 'visitor_elo': [1313.73], 'visitor_win_percentage': [0.011]})
+new_data = pd.DataFrame({'home_elo': [1313.73], 'home_win_percentage': [0.011], 'visitor_elo': [1595], 'visitor_win_percentage': [0.092]})
+prediction = model.predict(new_data)
+if prediction == 1:
+    print("Home team might win this match")
+else:
+    print("Visitor team might win this match")
+
+
+model2 = GaussianNB()
+model2.fit(X_train, y_train)
+prediction_NB = model.predict(X_test)
+accuracy_NB = accuracy_score(y_test, prediction_NB)
+print(f'Accuracy: {accuracy_NB:.2f}')
+print('Classification Report:\n', classification_report(y_test, prediction_NB))
+
+new_data = pd.DataFrame({'home_elo': [1313.73], 'home_win_percentage': [0.011], 'visitor_elo': [1595], 'visitor_win_percentage': [0.092]})
+prediction_NB = model2.predict(new_data)
+if prediction_NB == 1:
+    print("Home team might win this match")
+else:
+    print("Visitor team might win this match")
+
+plt.scatter(X_test['home_elo'], X_test['home_win_percentage'], c=prediction_NB, cmap='viridis')
+
+plt.xlabel('Home Elo')
+plt.ylabel('Home Win Percentage')
+plt.title('Predicted Winners - Gaussian Naive Bayes')
+plt.show()
