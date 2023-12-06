@@ -649,8 +649,9 @@ update games set is_regular = 0 where date >= playoff_date;
 
 update conference_standings set `Team` =  REPLACE(`Team`, '*', '');
 update conference_standings set `Team` =  REGEXP_REPLACE(`Team`, '\\([0-9]+\\)', '');
+UPDATE conference_standings SET `Team` = REGEXP_REPLACE(`Team`, '[^a-zA-Z0-9 ]', '');
 update conference_standings  set `Team` = trim(`Team`);
-update conference_standings set `GB` = null WHERE `GB` like '%???%';
+update conference_standings set `GB` = null WHERE `GB` like '%?%';
 
 
 update conference_standings set `W` = null where `W` = '';              
@@ -678,7 +679,7 @@ alter table conference_standings add column `W%` DECIMAL(10, 2);
 update conference_standings set `W%` = CAST(`W` AS DECIMAL(10, 2)) * 100 / CAST(`T` AS DECIMAL(10, 2));
 
 alter table conference_standings add column team_id int, add column franchise_id int;
+update conference_standings as a join abbrev as b on a.Team = b.Team set a.team_id = b.id;
 CREATE INDEX idx_team_id ON conference_standings(team_id);
-update conference_standings a join abbrev b on a.Team = b.Team set a.team_id = b.id;
 update conference_standings a join abbrev b on a.team_id = b.id set a.franchise_id = b.franchiseID;
 update conference_standings a join abbrev b on a.team_id = b.id set a.Team = b.Nickname;

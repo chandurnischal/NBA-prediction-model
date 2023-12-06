@@ -12,7 +12,7 @@ with mc.connect(**creds) as conn:
 
 
     query = '''
-    select * from games order by year(date);
+    select * from games where hpoints != '' order by year(date);
     '''
 
     cur.execute(query)

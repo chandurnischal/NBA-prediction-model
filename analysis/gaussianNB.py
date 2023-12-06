@@ -1,6 +1,6 @@
 import json
 import mysql.connector as mc
-from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
 import utils as u
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, ConfusionMatrixDisplay
@@ -19,18 +19,15 @@ data['hperc'] = data['hpoints'] / data['totalPoints']
 data['vperc'] = data['vpoints'] / data['totalPoints']
 
 n = len(data.index)
-trainPerc = 0.95
-trainSize = int(n * trainPerc)
-train = data.iloc[:trainSize]
-test = data.iloc[trainSize:]
+train, test = data[data['season'] < 2022], data[data['season'] >= 2022]
 
-features = ['home_elo', 'visitor_elo', 'home_per', 'visitor_per', 'hperc', 'vperc']
+features = ['home_elo', 'visitor_elo', 'home_per', 'visitor_per']
 label = ['home_victory']
 
 trainX, trainY = np.array(train[features]), np.array(train[label]).reshape(-1)
 testX, testY = np.array(test[features]), np.array(test[label]).reshape(-1)
 
-model = LogisticRegression(solver='liblinear')
+model = GaussianNB()
 
 model.fit(trainX, trainY)
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/game.css">
+    <title>NBA Games Today</title>
+</head>
+
+<body>
+    <header>
+        <img src="../static/logos/NBA.png" alt="NBA Logo" class="img-fluid mt-5">
+    </header>
+    <h2>Games Today</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th> # </th>
+                <th> Home Team </th>
+                <th> Visitor Team </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in df.iterrows() %}
+            <tr>
+                <td>{{ index + 1 }}</td>
+                <td><img src="{{ url_for('static', filename='../static/logos/' + row['home_id'] + '.png') }}"
+                        alt="{{ row['home_id'] }}" class="team-logo">
+                    {{ row['home'] }}
+                </td>
+                <td>
+                    <img src="{{ url_for('static', filename='../static/logos/' + row['visitor_id'] + '.png') }}"
+                        alt="{{ row['visitor_id'] }}" class="team-logo">
+                    {{ row['visitor'] }}
+                </td>
+                <td align="center">
+                    <a href="{{ url_for('game', home_id=row['home_id'], visitor_id=row['visitor_id']) }}">Details</a>
+                </td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

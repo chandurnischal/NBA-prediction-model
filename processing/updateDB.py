@@ -105,7 +105,6 @@ team = e.Teams("regular"), e.Teams("playoffs")
 
 print("Extracting Games schedule...\n")
 currentSchedule = games.seasonSchedule(currentYear)
-currentSchedule = currentSchedule[currentSchedule['VPoints'] != '']
 pushToDatabase(currentSchedule, "games", engine)
 
 print("Extracting playoffs schedule...\n")
