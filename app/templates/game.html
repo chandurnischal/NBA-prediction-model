@@ -2,79 +2,88 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/game.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/game.css') }}">
 
-    <title>NBA Game Details</title>
+  <title>NBA Game Details</title>
 </head>
 
 <body>
-    <header>
-        <img src="{{ url_for('static', filename='../static/logos/NBA.png') }}" />
-        <h1 align="center">NBA Game Details</h1>
-    </header>
+  <header>
+    <img src="{{ url_for('static', filename='../static/logos/NBA.png') }}" />
+    <h1 align="center">Game Details</h1>
+  </header>
 
-    <div class="container">
-        
-        <h2>{{ home_team }} v/s {{ visitor_team }}</h2>
+  <div class="container">
 
-        <table class="table table-borderless">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col"><img src="{{ url_for('static', filename = '../static/logos/' + home_id + '.png') }}" alt="{{ home_id }} Logo" class="team-logo">{{ home_team }}</th>
-                <th scope="col"><img src="{{ url_for('static', filename = '../static/logos/' + visitor_id + '.png') }}" alt="{{ visitor_id }} Logo" class="team-logo"">{{ visitor_team }}</th>
-              </tr>
-            </thead>
-          </table>
 
-          <div class="container mt-5">
-            <h2>Team Details</h2>
-            <table class="table table-striped">
-             <thead>
-                 <tr>
-                     <th>#</th>
-                     <th>Team</th>
-                     <th>Win</th>
-                     <th>Loss</th>
-                     <th>Total Games</th>
-                     <th>Win Percentage</th>
-                     <th>Games Behind</th>
-                     <th>Points Per Game</th>
-                     <th>Opponent Points Per Game</th>
-                     <th>Simple Rating System</th>
-                     <th>Conference</th>
-                 </tr>
-             </thead>
-             <tbody>
-                 {% for index, row in team.iterrows() %}
-                     <tr>
-                         <td>{{ index + 1 }}</td>
-                         <td>{{ row['Team'] }}</td>
-                         <td>{{ row['W'] }}</td>
-                         <td>{{ row['L'] }}</td>
-                         <td>{{row['T']}}</td>
-                         <td>{{ row['W%'] }}</td>
-                         <td>{{ row['GB'] }}</td>
-                         <td>{{ row['PS/G'] }}</td>
-                         <td>{{ row['PA/G'] }}</td>
-                         <td>{{ row['SRS'] }}</td>
-                         <td>{{ row['conf'] }}</td>
-                     </tr>
-                 {% endfor %}
-             </tbody>
-         </table>
-         </div>
-     
+    <table class="table table-borderless">
+      <thead>
+        <tr>
+          <th><h2>{{ home_team }}</h2></th>
+          <th><h2>v/s</h2></th>
+          <th><h2>{{ visitor_team }}</h2></th>
 
+        </tr>
+
+        <tr>
+          <th scope="col" style="text-align: center;">
+            <img src="{{ url_for('static', filename = '../static/logos/' + home_id + '.png') }}"
+              alt="{{ home_id }} Logo not available" class="team-logo">
+          </th>
+          <th></th>
+          <th scope="col" style="text-align: center;"><img
+              src="{{ url_for('static', filename = '../static/logos/' + visitor_id + '.png') }}"
+              alt="{{ visitor_id }} Logo not available" class="team-logo""> </th>
+            </tr>
+          </thead>
+        </table>
     </div>
-    <footer>
-        <p>&copy; 2024 NBA Game Details</p>
-    </footer>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        
+    <div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Team</th>
+            <th>Win</th>
+            <th>Loss</th>
+            <th>Total Games</th>
+            <th>Win Percentage</th>
+            <th>Games Behind</th>
+            <th>Points Per Game</th>
+            <th>Opp. Points Per Game</th>
+            <th>SRS</th>
+            <th>Conference</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for index, row in team.iterrows() %}
+          <tr>
+            <td>{{ index + 1 }}</td>
+            <td>{{ row['Team'] }}</td>
+            <td>{{ row['W'] }}</td>
+            <td>{{ row['L'] }}</td>
+            <td>{{row['T']}}</td>
+            <td>{{ row['W%'] }}</td>
+            <td>{{ row['GB'] }}</td>
+            <td>{{ row['PS/G'] }}</td>
+            <td>{{ row['PA/G'] }}</td>
+            <td>{{ row['SRS'] }}</td>
+            <td>{{ row['conf'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+  </div>
+  <footer>
+    <p>&copy; 2024 NBA Game Details</p>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
