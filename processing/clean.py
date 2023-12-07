@@ -2,10 +2,7 @@ import os
 import mysql.connector as mc
 import json
 from tqdm import tqdm 
-from time import perf_counter
 import subprocess
-
-start = perf_counter()
 
 with open("creds.json") as file:
     creds = json.load(file)
@@ -54,5 +51,3 @@ with mc.connect(**creds) as conn:
             cur.execute(query)
         except:
             pass
-
-print("\nExecution Time: {}s".format(round(perf_counter() - start, 2)))

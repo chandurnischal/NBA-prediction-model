@@ -14,20 +14,23 @@
   <header>
     <img src="{{ url_for('static', filename='../static/logos/NBA.png') }}" />
     <h1 align="center">Game Details</h1>
+    <h3 align="center">{{ date }}</h3>
   </header>
 
   <div class="container">
-
-
     <table class="table table-borderless">
       <thead>
         <tr>
-          <th><h2>{{ home_team }}</h2></th>
-          <th><h2>v/s</h2></th>
-          <th><h2>{{ visitor_team }}</h2></th>
-
+          <th>
+            <h2>{{ home_team }}</h2>
+          </th>
+          <th>
+            <h2>v/s</h2>
+          </th>
+          <th>
+            <h2>{{ visitor_team }}</h2>
+          </th>
         </tr>
-
         <tr>
           <th scope="col" style="text-align: center;">
             <img src="{{ url_for('static', filename = '../static/logos/' + home_id + '.png') }}"
@@ -41,42 +44,126 @@
           </thead>
         </table>
     </div>
-        
     <div>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Team</th>
-            <th>Win</th>
-            <th>Loss</th>
-            <th>Total Games</th>
-            <th>Win Percentage</th>
-            <th>Games Behind</th>
-            <th>Points Per Game</th>
-            <th>Opp. Points Per Game</th>
-            <th>SRS</th>
-            <th>Conference</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for index, row in team.iterrows() %}
-          <tr>
-            <td>{{ index + 1 }}</td>
-            <td>{{ row['Team'] }}</td>
-            <td>{{ row['W'] }}</td>
-            <td>{{ row['L'] }}</td>
-            <td>{{row['T']}}</td>
-            <td>{{ row['W%'] }}</td>
-            <td>{{ row['GB'] }}</td>
-            <td>{{ row['PS/G'] }}</td>
-            <td>{{ row['PA/G'] }}</td>
-            <td>{{ row['SRS'] }}</td>
-            <td>{{ row['conf'] }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <header style="text-align: center;">
+        <h3>Team Stats</h3>
+      </header>
+        <table class=" table table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Team</th>
+                <th>Win</th>
+                <th>Loss</th>
+                <th>Total Games</th>
+                <th>Win Percentage</th>
+                <th>Games Behind</th>
+                <th>Points Per Game</th>
+                <th>Opp. Points Per Game</th>
+                <th>SRS</th>
+                <th>Conference</th>
+              </tr>
+            </thead>
+      <tbody>
+        {% for index, row in team.iterrows() %}
+        <tr>
+          <td>{{ index + 1 }}</td>
+          <td>{{ row['Team'] }}</td>
+          <td>{{ row['W'] }}</td>
+          <td>{{ row['L'] }}</td>
+          <td>{{row['T']}}</td>
+          <td>{{ row['W%'] }}</td>
+          <td>{{ row['GB'] }}</td>
+          <td>{{ row['PS/G'] }}</td>
+          <td>{{ row['PA/G'] }}</td>
+          <td>{{ row['SRS'] }}</td>
+          <td>{{ row['conf'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+  <header>
+    <h3 style="text-align: center;">Player Stats Per Game</h3>
+  </header>
+  
+    <table class="table table-hover">
+      <thead>
+        <th style="text-align: center;">
+          <h3>{{ home_team }}</h3>
+        </th>
+        <th style="text-align: center;">
+          <h3>{{ visitor_team }}</h3>
+        </th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>POS</th>
+                  <th>PTS</th>
+                  <th>AST</th>
+                  <th>BLK</th>
+                  <th>TRB</th>
+                  <th>STL</th>
+                  <th>MP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for index, row in home_players.iterrows() %}
+                <tr>
+                  <td>{{ row['player'] }}</td>
+                  <td>{{ row['pos'] }}</td>
+                  <td>{{ row['pts'] }}</td>
+                  <td>{{row['ast']}}</td>
+                  <td>{{ row['blk'] }}</td>
+                  <td>{{ row['trb'] }}</td>
+                  <td>{{ row['stl'] }}</td>
+                  <td>{{ row['mp'] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+          <td>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>POS</th>
+                  <th>PTS</th>
+                  <th>AST</th>
+                  <th>BLK</th>
+                  <th>TRB</th>
+                  <th>STL</th>
+                  <th>MP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for index, row in visitor_players.iterrows() %}
+                <tr>
+                  <td>{{ row['player'] }}</td>
+                  <td>{{ row['pos'] }}</td>
+                  <td>{{ row['pts'] }}</td>
+                  <td>{{row['ast']}}</td>
+                  <td>{{ row['blk'] }}</td>
+                  <td>{{ row['trb'] }}</td>
+                  <td>{{ row['stl'] }}</td>
+                  <td>{{ row['mp'] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
   <footer>
     <p>&copy; 2024 NBA Game Details</p>

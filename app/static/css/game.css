@@ -29,8 +29,10 @@ table {
     border-collapse: collapse;
     margin-top: 20px;
 }
+
 th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+    text-align: center;
+    padding: 10px;
+    height: 50px;
+    font-size: 0.9rem;
 }
