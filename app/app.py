@@ -32,9 +32,12 @@ data = sqlTodf(query, creds).astype(str)
 
 app = Flask(__name__)
 
+formattedDate = datetime.now().strftime('%d %B %Y')
+
+
 @app.route('/')
 def today():
-    return render_template('index.html', columns = data.columns, df=data)
+    return render_template('index.html', columns = data.columns, df=data, date=formattedDate)
 
 
 @app.route('/game/<home_id>/<visitor_id>')
@@ -52,7 +55,6 @@ def game(home_id, visitor_id):
 
     team = sqlTodf(teamQuery, creds)
 
-    formattedDate = datetime.now().strftime('%d %B %Y')
     home_team, visitor_team = logos[logos['ID'] == int(home_id)]['Team'].iloc[0], logos[logos['ID'] == int(visitor_id)]['Team'].iloc[0]
 
     playerQuery = '''
