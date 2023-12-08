@@ -649,7 +649,7 @@ update games set is_regular = 0 where date >= playoff_date;
 
 update conference_standings set `Team` =  REPLACE(`Team`, '*', '');
 update conference_standings set `Team` =  REGEXP_REPLACE(`Team`, '\\([0-9]+\\)', '');
-UPDATE conference_standings SET `Team` = REGEXP_REPLACE(`Team`, '[^a-zA-Z0-9 ]', '');
+UPDATE conference_standings SET `Team` = REGEXP_REPLACE(`Team`, '[^a-zA-Z0-9\/ ]', '');
 update conference_standings  set `Team` = trim(`Team`);
 update conference_standings set `GB` = null WHERE `GB` like '%?%';
 

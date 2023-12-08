@@ -84,7 +84,7 @@
               <tbody>
                 {% for index, row in team.iterrows() %}
                 <tr>
-                  <td>{{ index + 1 }}</td>
+                  <td>{{ row['index'] + 1 }}</td>
                   <td>{{ row['Team'] }}</td>
                   <td>{{ row['W'] }}</td>
                   <td>{{ row['L'] }}</td>

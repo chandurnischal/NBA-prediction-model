@@ -80,7 +80,7 @@ def game(home_id, visitor_id):
         home_id, visitor_id, year
     )
 
-    team = sqlTodf(teamQuery, creds)
+    team = sqlTodf(teamQuery, creds).reset_index()
 
     home_team, visitor_team = (
         logos[logos["ID"] == int(home_id)]["Team"].iloc[0],
@@ -107,7 +107,7 @@ def game(home_id, visitor_id):
     color1 = "rgb({}, {}, {})".format(c1[0], c1[1], c1[2])
     color2 = "rgb({}, {}, {})".format(c2[0], c2[1], c2[2])
 
-    probs = p.LogReg(home_id, visitor_id, year)
+    probs = p.classify(home_id, visitor_id)
 
     return render_template(
         "game.html",
@@ -121,8 +121,8 @@ def game(home_id, visitor_id):
         date=formattedDate,
         color1=color1,
         color2=color2,
-        winPerc=round(probs[0], 2),
-        lossPerc=round(probs[1], 2),
+        winPerc=probs['YES'],
+        lossPerc=probs['NO'],
     )
 
 
