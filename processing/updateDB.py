@@ -1,5 +1,6 @@
 import sys
-sys.path.append('extraction')
+
+sys.path.append("extraction")
 import extraction as e
 import json
 from datetime import datetime
@@ -9,13 +10,15 @@ from time import sleep
 from random import randint
 import mysql.connector as mc
 
-def pushToDatabase(data:pd.DataFrame, tablename, engine) -> None:
+
+def pushToDatabase(data: pd.DataFrame, tablename, engine) -> None:
     try:
         data.to_sql(tablename, con=engine, if_exists="append", index=False)
     except:
         pass
 
-def totalStats(player, team:e.Teams, year:int, engine) -> None:
+
+def totalStats(player, team: e.Teams, year: int, engine) -> None:
     print("Extracting Total Stats...\n")
     regularPlayer = player[0].totalStats(year)
     sleep(randint(5, 10))
@@ -31,7 +34,8 @@ def totalStats(player, team:e.Teams, year:int, engine) -> None:
     pushToDatabase(regularTeam, "team_total", engine)
     pushToDatabase(playoffsTeam, "team_total", engine)
 
-def perGameStats(player, team:e.Teams, year:int, engine) -> None:
+
+def perGameStats(player, team: e.Teams, year: int, engine) -> None:
     print("Extracting Per Game Stats...\n")
     regularPlayer = player[0].perGameStats(year)
     sleep(randint(5, 10))
@@ -50,7 +54,8 @@ def perGameStats(player, team:e.Teams, year:int, engine) -> None:
     pushToDatabase(regularTeam, "team_per_game", engine)
     pushToDatabase(playoffsTeam, "team_per_game", engine)
 
-def perMinuteStats(player, year:int, engine) -> None:
+
+def perMinuteStats(player, year: int, engine) -> None:
     print("Extracting Per Minute Stats...\n")
     regularPlayer = player[0].perMinuteStats(year)
     sleep(randint(5, 10))
@@ -61,7 +66,8 @@ def perMinuteStats(player, year:int, engine) -> None:
     pushToDatabase(regularPlayer, "player_per_minute", engine)
     pushToDatabase(playoffsPlayer, "player_per_minute", engine)
 
-def perPossessionStats(player, year:int, engine) -> None:
+
+def perPossessionStats(player, year: int, engine) -> None:
     print("Extracting Per Possession Stats...\n")
     regularPlayer = player[0].perPossessionStats(year)
     sleep(randint(5, 10))
@@ -75,12 +81,13 @@ def perPossessionStats(player, year:int, engine) -> None:
     playoffsTeam = team[1].perPossStats(year)
     sleep(randint(5, 10))
 
-    pushToDatabase(regularPlayer, "player_per_possesion", engine)
+    pushToDatabase(regularPlayer, "player_per_possession", engine)
     pushToDatabase(playoffsPlayer, "player_per_possession", engine)
     pushToDatabase(regularTeam, "team_per_possession", engine)
     pushToDatabase(playoffsTeam, "team_per_possession", engine)
 
-def advancedStats(player, year:int, engine) -> None:
+
+def advancedStats(player, year: int, engine) -> None:
     print("Extracting Advanced Stats...\n")
     regularPlayer = player[0].advancedStats(year)
     sleep(randint(5, 10))
@@ -88,12 +95,17 @@ def advancedStats(player, year:int, engine) -> None:
     sleep(randint(5, 10))
 
     pushToDatabase(regularPlayer, "player_advanced", engine)
-    pushToDatabase(playoffsPlayer, "player_advanced", engine)    
+    pushToDatabase(playoffsPlayer, "player_advanced", engine)
+
 
 with open("creds.json") as file:
     creds = json.load(file)
 
-engine = create_engine("mysql+mysqlconnector://{}:{}@{}/{}".format(creds["user"], creds["password"], creds["host"], creds["database"]))
+engine = create_engine(
+    "mysql+mysqlconnector://{}:{}@{}/{}".format(
+        creds["user"], creds["password"], creds["host"], creds["database"]
+    )
+)
 
 games = e.Games()
 currentYear = datetime.now().year + 1
@@ -108,7 +120,9 @@ currentSchedule = games.seasonSchedule(currentYear)
 pushToDatabase(currentSchedule, "games", engine)
 
 print("Extracting playoffs schedule...\n")
-games.playoffsDates((1980, currentYear)).to_sql("playoffs_dates", index = False, con=engine, if_exists = "replace")
+games.playoffsDates((1980, currentYear)).to_sql(
+    "playoffs_dates", index=False, con=engine, if_exists="replace"
+)
 sleep(randint(5, 10))
 
 print("Extracting Conference Standings...\n")

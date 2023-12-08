@@ -4,14 +4,18 @@ import extraction as e
 from random import randint
 from time import sleep
 import pandas as pd
-from tqdm import tqdm 
+from tqdm import tqdm
 
 
 with open("../creds.json") as file:
     creds = json.load(file)
 
 
-engine = create_engine("mysql+mysqlconnector://{}:{}@{}/{}".format(creds["user"], creds["password"], creds["host"], creds["database"]))
+engine = create_engine(
+    "mysql+mysqlconnector://{}:{}@{}/{}".format(
+        creds["user"], creds["password"], creds["host"], creds["database"]
+    )
+)
 player = e.Players("regular"), e.Players("playoffs")
 
 team = e.Teams("regular"), e.Teams("playoffs")
@@ -19,12 +23,10 @@ team = e.Teams("regular"), e.Teams("playoffs")
 games = e.Games()
 
 
-
 years = creds["years"]
 
 
 def playerTotalStats(year):
-    
     output = []
 
     output.append(player[0].totalStats(year))
@@ -35,11 +37,12 @@ def playerTotalStats(year):
 
     sleep(randint(10, 20))
 
-    pd.concat(output).to_sql(name="player_total", index=False, con=engine, if_exists="append")
+    pd.concat(output).to_sql(
+        name="player_total", index=False, con=engine, if_exists="append"
+    )
 
 
 def playerPerGameStats(year):
-    
     output = []
 
     output.append(player[0].perGameStats(year))
@@ -50,10 +53,12 @@ def playerPerGameStats(year):
 
     sleep(randint(10, 20))
 
-    pd.concat(output).to_sql(name="player_per_game", index=False, con=engine, if_exists="append")
+    pd.concat(output).to_sql(
+        name="player_per_game", index=False, con=engine, if_exists="append"
+    )
+
 
 def playerPerPossStats(year):
-        
     output = []
 
     output.append(player[0].perPossessionStats(year))
@@ -64,10 +69,12 @@ def playerPerPossStats(year):
 
     sleep(randint(10, 20))
 
-    pd.concat(output).to_sql(name="player_per_possession", index=False, con=engine, if_exists="append")
+    pd.concat(output).to_sql(
+        name="player_per_possession", index=False, con=engine, if_exists="append"
+    )
+
 
 def playerAdvancedStats(year):
-        
     output = []
 
     output.append(player[0].advancedStats(year))
@@ -78,11 +85,12 @@ def playerAdvancedStats(year):
 
     sleep(randint(10, 20))
 
-    pd.concat(output).to_sql(name="player_advanced", index=False, con=engine, if_exists="append")
+    pd.concat(output).to_sql(
+        name="player_advanced", index=False, con=engine, if_exists="append"
+    )
 
 
 def playerPerMinuteStats(year):
-
     output = []
 
     output.append(player[0].perMinuteStats(year))
@@ -93,10 +101,12 @@ def playerPerMinuteStats(year):
 
     sleep(randint(10, 20))
 
-    pd.concat(output).to_sql(name="player_per_minute", index=False, con=engine, if_exists="append")
+    pd.concat(output).to_sql(
+        name="player_per_minute", index=False, con=engine, if_exists="append"
+    )
+
 
 def teamTotalStats(year):
-        
     output = []
 
     output.append(team[0].totalStats(year))
@@ -107,11 +117,12 @@ def teamTotalStats(year):
 
     sleep(randint(10, 20))
 
-    pd.concat(output).to_sql(name="team_total", index=False, con=engine, if_exists="append")
+    pd.concat(output).to_sql(
+        name="team_total", index=False, con=engine, if_exists="append"
+    )
 
 
 def teamPerGameStats(year):
-        
     output = []
 
     output.append(team[0].perGameStats(year))
@@ -122,7 +133,10 @@ def teamPerGameStats(year):
 
     sleep(randint(10, 20))
 
-    pd.concat(output).to_sql(name="team_per_game", index=False, con=engine, if_exists="append")
+    pd.concat(output).to_sql(
+        name="team_per_game", index=False, con=engine, if_exists="append"
+    )
+
 
 def teamPerPossessionStats(year):
     output = []
@@ -135,13 +149,17 @@ def teamPerPossessionStats(year):
 
     sleep(randint(10, 20))
 
-    pd.concat(output).to_sql(name="team_per_possession", index=False, con=engine, if_exists="append")
-
+    pd.concat(output).to_sql(
+        name="team_per_possession", index=False, con=engine, if_exists="append"
+    )
 
 
 def gamesSchedule(year):
-    games.seasonSchedule(year).to_sql(name="games", index=False, con=engine, if_exists="append")
+    games.seasonSchedule(year).to_sql(
+        name="games", index=False, con=engine, if_exists="append"
+    )
     sleep(randint(10, 20))
+
 
 for year in tqdm(range(*years)):
     try:
@@ -162,7 +180,6 @@ for year in tqdm(range(*years)):
         teamTotalStats(year)
 
         gamesSchedule(year)
-
 
     except Exception as e:
         print(year, e.__class__)

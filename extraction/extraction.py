@@ -5,6 +5,7 @@ from tqdm import tqdm
 from time import sleep
 from random import randint
 
+
 class Players:
     def __init__(self, type: str) -> None:
         self.__baseURL = "https://www.basketball-reference.com/"
@@ -72,7 +73,7 @@ class Players:
             return data
         except:
             return None
-        
+
     def perGameStats(self, year: int) -> pd.DataFrame:
         try:
             url = self.__baseURL + "NBA_{}_per_game.html".format(year)
@@ -85,7 +86,7 @@ class Players:
             return data
         except:
             return None
-        
+
     def perMinuteStats(self, year: int) -> pd.DataFrame:
         try:
             url = self.__baseURL + "NBA_{}_per_minute.html".format(year)
@@ -112,7 +113,6 @@ class Players:
         except:
             return None
 
-
     def advancedStats(self, year: int) -> pd.DataFrame:
         try:
             url = self.__baseURL + "NBA_{}_advanced.html".format(year)
@@ -125,6 +125,7 @@ class Players:
             return data
         except:
             return None
+
 
 class Teams:
     def __init__(self, type: str) -> None:
@@ -178,7 +179,7 @@ class Teams:
 
         except:
             return None
-        
+
     def perGameStats(self, year: int) -> pd.DataFrame:
         try:
             return self.__tableExtractor(mode="per_game-team", year=year)
@@ -251,7 +252,7 @@ class Games:
 
         soup = BeautifulSoup(r.text, "lxml")
         table = soup.find("table", id="schedule")
-        thead = table.find("thead").text.strip().split('\n')
+        thead = table.find("thead").text.strip().split("\n")
 
         n = len(thead)
 
@@ -260,7 +261,6 @@ class Games:
             if thead[i] == "PTS" and c == 1:
                 thead[i] = "VPTS"
                 c += 1
-
 
         tbody = table.find("tbody")
 
@@ -280,8 +280,7 @@ class Games:
             rows.append(row)
 
         data = pd.DataFrame(rows, columns=thead)
-        unwanted = ['Start (ET)', '\xa0', '\xa0']
-
+        unwanted = ["Start (ET)", "\xa0", "\xa0"]
 
         for u in unwanted:
             try:
@@ -290,7 +289,16 @@ class Games:
                 pass
 
         oldColumns = data.columns.to_list()
-        requiredColumns = ["Date", "Visitor", "VPoints", "Home", "HPoints", "Attend", "Arena", "Notes"]
+        requiredColumns = [
+            "Date",
+            "Visitor",
+            "VPoints",
+            "Home",
+            "HPoints",
+            "Attend",
+            "Arena",
+            "Notes",
+        ]
         renameCols = dict.fromkeys(oldColumns, None)
 
         for i in range(len(oldColumns)):
@@ -299,7 +307,7 @@ class Games:
         data = data.rename(columns=renameCols)
 
         return data
-    
+
     def seasonSchedule(self, year: int) -> pd.DataFrame:
         url = self.baseURL + "leagues/NBA_{}_games.html".format(year)
         r = requests.get(url)
@@ -317,17 +325,17 @@ class Games:
 
         data = pd.concat(dataList)
 
-        data = data.drop('Notes', axis=1)
+        data = data.drop("Notes", axis=1)
         return data
 
     def playoffsDates(self, dateRange) -> pd.DataFrame:
-        url = '''
+        url = """
         https://www.basketball-reference.com/playoffs/series.html#playoffs_series
-        '''
+        """
 
         r = requests.get(url)
-        soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find(id = "playoffs_series")
+        soup = BeautifulSoup(r.content, "html.parser")
+        table = soup.find(id="playoffs_series")
         tbody = table.find("tbody")
 
         trs = tbody.find_all("tr")
@@ -342,15 +350,15 @@ class Games:
 
             for td in tds:
                 row.append(td.text)
-            
+
             rows.append(row)
 
         data = pd.DataFrame(rows)
         data = data[data[1] == "NBA"]
 
-        data[3] = data[3].replace('\s+\-.+', '', regex=True)
-        data[3] = data[3] + ', ' + data[0].astype(str)
-        data[3] = pd.to_datetime(data[3], format='%b %d, %Y')
+        data[3] = data[3].replace("\s+\-.+", "", regex=True)
+        data[3] = data[3] + ", " + data[0].astype(str)
+        data[3] = pd.to_datetime(data[3], format="%b %d, %Y")
         rows = []
         for year in range(*dateRange):
             smallData = data[data[3].dt.year == year]
@@ -358,4 +366,4 @@ class Games:
 
             rows.append(row)
 
-        return pd.DataFrame(rows, columns=['year', 'start_date'])
+        return pd.DataFrame(rows, columns=["year", "start_date"])

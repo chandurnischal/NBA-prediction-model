@@ -1,6 +1,1 @@
-{
-    "host": "localhost", 
-    "user": "root", 
-    "password": "root",
-    "database": "nba"
-}
+{"host": "localhost", "user": "root", "password": "root", "database": "nba"}

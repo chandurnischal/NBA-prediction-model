@@ -9,6 +9,23 @@
 
   <title>NBA Game Details</title>
 </head>
+<style>
+  .custom-bar-container {
+    width: 100%;
+    height: 30px;
+    display: flex;
+  }
+
+  .custom-bar-red {
+    flex: {{ winPerc * 100 }};
+    background-color: {{ color1 }};
+  }
+
+  .custom-bar-blue {
+    flex: {{ lossPerc * 100 }};
+    background-color: {{ color2 }};
+  }
+</style>
 
 <body>
   <header>
@@ -45,50 +62,50 @@
         </table>
     </div>
     <div>
-      <header style="text-align: center;">
-        <h3>Team Stats</h3>
-      </header>
-        <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Team</th>
-                <th>Win</th>
-                <th>Loss</th>
-                <th>Total Games</th>
-                <th>Win Percentage</th>
-                <th>Games Behind</th>
-                <th>Points Per Game</th>
-                <th>Opp. Points Per Game</th>
-                <th>SRS</th>
-                <th>Conference</th>
-              </tr>
-            </thead>
-      <tbody>
-        {% for index, row in team.iterrows() %}
-        <tr>
-          <td>{{ index + 1 }}</td>
-          <td>{{ row['Team'] }}</td>
-          <td>{{ row['W'] }}</td>
-          <td>{{ row['L'] }}</td>
-          <td>{{row['T']}}</td>
-          <td>{{ row['W%'] }}</td>
-          <td>{{ row['GB'] }}</td>
-          <td>{{ row['PS/G'] }}</td>
-          <td>{{ row['PA/G'] }}</td>
-          <td>{{ row['SRS'] }}</td>
-          <td>{{ row['conf'] }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+      <header style=" text-align: center;">
+            <h3>Team Stats</h3>
+            </header>
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Team</th>
+                  <th>Win</th>
+                  <th>Loss</th>
+                  <th>Total Games</th>
+                  <th>Win Percentage</th>
+                  <th>Games Behind</th>
+                  <th>Points Per Game</th>
+                  <th>Opp. Points Per Game</th>
+                  <th>SRS</th>
+                  <th>Conference</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for index, row in team.iterrows() %}
+                <tr>
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ row['Team'] }}</td>
+                  <td>{{ row['W'] }}</td>
+                  <td>{{ row['L'] }}</td>
+                  <td>{{row['T']}}</td>
+                  <td>{{ row['W%'] }}</td>
+                  <td>{{ row['GB'] }}</td>
+                  <td>{{ row['PS/G'] }}</td>
+                  <td>{{ row['PA/G'] }}</td>
+                  <td>{{ row['SRS'] }}</td>
+                  <td>{{ row['conf'] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
   </div>
 
   <div>
-  <header>
-    <h3 style="text-align: center;">Top 5 Player Stats Per Game</h3>
-  </header>
-  
+    <header>
+      <h3 style="text-align: center;">Top 5 Player Stats Per Game</h3>
+    </header>
+
     <table class="table table-hover">
       <thead>
         <th style="text-align: center;">
@@ -165,6 +182,26 @@
       </tbody>
     </table>
   </div>
+  <header>
+    <p>
+    <h3 align="center">Probability of Victory</h3>
+    </p>
+    <table>
+      <tr>
+        <td>{{ home_team }}</td>
+        <td>{{ visitor_team }}</td>
+      </tr>
+      <tr>
+        <td> {{ winPerc * 100 }}% </td>
+        <td> {{ lossPerc * 100 }}% </td>
+      </tr>
+    </table>
+    <div class="custom-bar-container">
+      <div class="custom-bar-red"></div>
+      <div class="custom-bar-blue"></div>
+    </div>
+  </header>
+
   <footer>
     <p>&copy; 2023 NBA Media Ventures, LLC. All rights reserved.</p>
   </footer>
