@@ -17,12 +17,12 @@
   }
 
   .custom-bar-red {
-    flex: {{ winPerc * 100 }};
+    flex: {{ winPerc }};
     background-color: {{ color1 }};
   }
 
   .custom-bar-blue {
-    flex: {{ lossPerc * 100 }};
+    flex: {{ lossPerc }};
     background-color: {{ color2 }};
   }
 </style>
@@ -192,8 +192,8 @@
         <td>{{ visitor_team }}</td>
       </tr>
       <tr>
-        <td> {{ winPerc * 100 }}% </td>
-        <td> {{ lossPerc * 100 }}% </td>
+        <td> {{ winPerc }}% </td>
+        <td> {{ lossPerc }}% </td>
       </tr>
     </table>
     <div class="custom-bar-container">

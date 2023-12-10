@@ -37,7 +37,7 @@ def sqlTodf(query: str, creds: dict) -> pd.DataFrame:
     return data
 
 
-today = datetime.now()
+today = datetime.now() - timedelta(1)
 todayDate = today.strftime("%Y-%m-%d")
 year = today.year + 1
 
@@ -121,8 +121,8 @@ def game(home_id, visitor_id):
         date=formattedDate,
         color1=color1,
         color2=color2,
-        winPerc=probs['YES'],
-        lossPerc=probs['NO'],
+        winPerc=int(probs['YES'] * 100),
+        lossPerc=int(probs['NO'] * 100),
     )
 
 

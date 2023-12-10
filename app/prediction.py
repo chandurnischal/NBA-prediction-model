@@ -2,10 +2,12 @@ import json
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
 import utils as u
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import numpy as np
-from sklearn.model_selection import train_test_split
 from datetime import datetime
 
 with open("creds.json") as file:
@@ -18,17 +20,17 @@ def trainingFunction(creds, homeFeatures, visitorFeatures):
 
     data = u.sqlTodf(query, creds)
     train = data[data["season"] <= 2023].apply(pd.to_numeric, errors="ignore")
-    test = data[data["season"] == 2024].apply(pd.to_numeric, errors="ignore")
-
-    # train, test = train_test_split(data, test_size=0.2, random_state=1001)
 
     features = homeFeatures + visitorFeatures
     label = ["home_victory"]
 
     trainX, trainY = np.array(train[features]), np.array(train[label]).reshape(-1)
-    testX, testY = np.array(test[features]), np.array(test[label]).reshape(-1)
+    # model = DecisionTreeClassifier(criterion="entropy", random_state=1001, max_depth=5)
+    # model = LogisticRegression()
+    # model = GaussianNB()
+    # model = KNeighborsClassifier(n_neighbors=8)
+    model = RandomForestClassifier(n_estimators=100, criterion="entropy", max_depth=5, random_state=1001)
 
-    model = LogisticRegression()
     model.fit(trainX, trainY)
 
     return model

@@ -82,6 +82,6 @@ def compareTeamElos(teamIDS: list) -> None:
     plt.show()
 
 
-ids = [24]
-# compareTeamElos(ids)
-compareFranchiseElos(ids)
+ids = [11, 2]
+compareTeamElos(ids)
+# compareFranchiseElos(ids)
