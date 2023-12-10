@@ -8,7 +8,7 @@ from collections import Counter
 import prediction as p
 import time
 
-def themeExtractor(teamID):
+def themeExtractor(teamID, common:int = 1):
     img = Image.open("app/static/logos/{}.png".format(teamID))
     img_rgb = img.convert("RGB")
     pixel_values = list(img_rgb.getdata())
@@ -19,7 +19,7 @@ def themeExtractor(teamID):
     ]
 
     color_counter = Counter(non_zero_pixel_values)
-    themeExtractor = color_counter.most_common(1)[0][0]
+    themeExtractor = color_counter.most_common(2)[common - 1][0]
 
     return themeExtractor
 
@@ -104,7 +104,23 @@ def game(home_id, visitor_id):
         players[players["team_id"] == int(visitor_id)].reset_index(drop=True).head(5)
     )
 
+    arenaQuery = '''
+    select arena from games where home_id = {} order by date desc limit 1
+    '''.format(home_id)
+
+    arena = sqlTodf(arenaQuery, creds).iloc[0].values[0]
+
     c1, c2 = themeExtractor(home_id), themeExtractor(visitor_id)
+
+    if (c1[0] - c2[0]) + (c1[1] - c2[1]) + (c1[2] - c2[2]) <= 10:
+        c1 = themeExtractor(home_id, 2)
+
+    if c1 == (255,255, 255):
+        c1 = themeExtractor(home_id, 2)
+
+    if c2 == (255, 255, 255):
+        c2 = themeExtractor(visitor_id, 2)
+
     color1 = "rgb({}, {}, {})".format(c1[0], c1[1], c1[2])
     color2 = "rgb({}, {}, {})".format(c2[0], c2[1], c2[2])
 
@@ -122,6 +138,7 @@ def game(home_id, visitor_id):
         visitor_id=visitor_id,
         home_team=home_team,
         visitor_team=visitor_team,
+        arena=arena,
         team=team,
         home_players=homePlayers,
         visitor_players=visitorPlayers,

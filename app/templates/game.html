@@ -14,6 +14,7 @@
     width: 100%;
     height: 30px;
     display: flex;
+    border: 0.09rem solid black;
   }
 
   .custom-bar-red {
@@ -24,13 +25,13 @@
   .custom-bar-blue {
     flex: {{ lossPerc }};
     background-color: {{ color2 }};
+    border-left: 0.01rem solid black;
   }
 </style>
 
 <body>
   <header>
     <img src="{{ url_for('static', filename='../static/logos/NBA.png') }}" />
-    <a><h3>Today's games</h3></a>
     <h1 align="center">Game Details</h1>
     <h3 align="center">{{ date }}</h3>
   </header>
@@ -62,6 +63,8 @@
           </thead>
         </table>
     </div>
+    <h2 align="center">Arena: {{ arena }}</h2>
+    <br><br>
     <div>
       <header style=" text-align: center;">
             <h3>Team Stats</h3>
