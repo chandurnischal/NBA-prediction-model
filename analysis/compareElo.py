@@ -60,7 +60,7 @@ def plotTeamElo(teamID: int) -> None:
         creds = json.load(file)
 
     query = """
-    select home_id, home_fid, home, visitor_id, visitor_fid, visitor, hpoints, vpoints, home_elo, visitor_elo, date from elo where (home_fid = {} or visitor_fid = {})
+    select home_id, home_fid, home, visitor_id, visitor_fid, visitor, hpoints, vpoints, home_elo, visitor_elo, date from elo where (home_fid = {} or visitor_fid = {}) and (season between 2018 and 2024) 
     """.format(
         teamID, teamID
     )

@@ -6,7 +6,7 @@ from flask import Flask, render_template
 from PIL import Image
 from collections import Counter
 import prediction as p
-
+import time
 
 def themeExtractor(teamID):
     img = Image.open("app/static/logos/{}.png".format(teamID))
@@ -37,7 +37,7 @@ def sqlTodf(query: str, creds: dict) -> pd.DataFrame:
     return data
 
 
-today = datetime.now() - timedelta(1)
+today = datetime.now() + timedelta(1)
 todayDate = today.strftime("%Y-%m-%d")
 year = today.year + 1
 
@@ -56,7 +56,6 @@ app = Flask(__name__)
 
 formattedDate = datetime.now().strftime("%d %B %Y")
 
-
 @app.route("/")
 def today():
     return render_template(
@@ -66,6 +65,8 @@ def today():
 
 @app.route("/game/<home_id>/<visitor_id>")
 def game(home_id, visitor_id):
+    start = time.time()
+
     logoQuery = """
     select * from abbrev where id in ({}, {})
     """.format(
@@ -75,9 +76,9 @@ def game(home_id, visitor_id):
     logos = sqlTodf(logoQuery, creds)
 
     teamQuery = """
-    select * from conference_standings where team_id in ({}, {}) and year={}
+    select * from conference_standings where team_id in ({}, {}) and year = (select max(year) from conference_standings)
     """.format(
-        home_id, visitor_id, year
+        home_id, visitor_id
     )
 
     team = sqlTodf(teamQuery, creds).reset_index()
@@ -88,9 +89,9 @@ def game(home_id, visitor_id):
     )
 
     playerQuery = """
-    select player, team_id, tm, pos, pts, ast, blk, trb, stl, mp from player_per_game where team_id in ({}, {}) and is_regular=1 and year = {} order by pts desc
+    select player, team_id, tm, pos, pts, ast, blk, trb, stl, mp from player_per_game where team_id in ({}, {}) and is_regular=1 and year = (select max(year) from player_per_game) order by pts desc
     """.format(
-        home_id, visitor_id, year
+        home_id, visitor_id
     )
 
     players = sqlTodf(playerQuery, creds)
@@ -108,6 +109,12 @@ def game(home_id, visitor_id):
     color2 = "rgb({}, {}, {})".format(c2[0], c2[1], c2[2])
 
     probs = p.classify(home_id, visitor_id)
+
+    end = time.time()
+
+    latency = end - start
+
+    app.logger.info('Latency: {}s'.format(latency))
 
     return render_template(
         "game.html",
