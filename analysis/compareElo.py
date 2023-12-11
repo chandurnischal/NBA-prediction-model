@@ -40,6 +40,8 @@ def compareTeamElos(teamIDS: list) -> None:
     plt.title("Team Elo Comparison Season 2023", fontdict={"size": 20})
     plt.legend()
     plt.axhline(y=1500, c="k")
+    plt.xlabel('Date')
+    plt.ylabel('Elo')
     plt.grid("--")
     plt.show()
 

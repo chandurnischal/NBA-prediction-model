@@ -1,4 +1,6 @@
 .nba/
-data
+data/csv
+data/plots
+data/latest_dump.sql
 __pycache__
 errors.csv
