@@ -28,7 +28,9 @@ with mc.connect(**creds) as conn:
     homeEloList = []
     visitorEloList = []
 
-    for index, row in tqdm(data.iterrows(), total=data.shape[0], desc="Processing Games", unit="row"):
+    for index, row in tqdm(
+        data.iterrows(), total=data.shape[0], desc="Processing Games", unit="row"
+    ):
         home = row["home"]
         visitor = row["visitor"]
         home_elo = elo_ratings[home]

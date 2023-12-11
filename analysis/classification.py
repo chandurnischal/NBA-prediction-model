@@ -10,9 +10,8 @@ import utils as u
 from sklearn.metrics import accuracy_score, classification_report
 import numpy as np
 
+
 def classifier(features, label):
-
-
     query = """
     select * from elo where is_regular=1
     """
@@ -28,7 +27,6 @@ def classifier(features, label):
     # trainX = scaler.fit_transform(trainX)
     # testX = scaler.fit_transform(testX)
 
-
     # model = GaussianNB()
     model = LogisticRegression()
     # model = DecisionTreeClassifier(criterion="entropy", random_state=1001, max_depth=5)
@@ -40,16 +38,17 @@ def classifier(features, label):
     classficationReport = classification_report(testY, prediction, output_dict=True)
     return classficationReport
 
+
 with open("creds.json") as file:
     creds = json.load(file)
 
-homeFeatures = ['home_elo', 'home_per', 'home_eff', 'home_win_perc']
-visitorFeatures = ['visitor_elo', 'visitor_per', 'visitor_eff', 'visitor_win_perc']
+homeFeatures = ["home_elo", "home_per", "home_eff", "home_win_perc"]
+visitorFeatures = ["visitor_elo", "visitor_per", "visitor_eff", "visitor_win_perc"]
 features = homeFeatures + visitorFeatures
 report = classifier(features, "home_victory")
 
-output = {'accuracy': report['accuracy']}
-output.update(report['weighted avg'])
+output = {"accuracy": report["accuracy"]}
+output.update(report["weighted avg"])
 
 for o in output:
     print(o, ": ", output[o])

@@ -5,11 +5,11 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
 
-with open('creds.json') as file:
+with open("creds.json") as file:
     creds = json.load(file)
 
-homeFeatures = ['home_elo', 'home_per', 'home_eff', 'home_win_perc']
-visitorFeatures = ['visitor_elo', 'visitor_per', 'visitor_eff', 'visitor_win_perc']
+homeFeatures = ["home_elo", "home_per", "home_eff", "home_win_perc"]
+visitorFeatures = ["visitor_elo", "visitor_per", "visitor_eff", "visitor_win_perc"]
 features = homeFeatures + visitorFeatures
 label = "mov"
 
