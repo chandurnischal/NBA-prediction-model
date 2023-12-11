@@ -90,6 +90,8 @@ Enter your password when you are prompted for it.
 
 Configure the credentials accordingly. 
 
+## Usage
+
 #### Getting Latest Data
 
 In order to have the best possible prediction, it is preferred to have the latest data.
