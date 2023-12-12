@@ -29,8 +29,8 @@ def trainingFunction(creds, homeFeatures, visitorFeatures):
     # scaler = StandardScaler()
     # trainX = scaler.fit_transform(trainX)
 
-    model = GaussianNB()
-    # model = LogisticRegression()
+    # model = GaussianNB()
+    model = LogisticRegression()
     # model = DecisionTreeClassifier(criterion="entropy", random_state=1001, max_depth=5)
     # model = KNeighborsClassifier(n_neighbors=8)
     # model = RandomForestClassifier(n_estimators=100, criterion="entropy", max_depth=5, random_state=1001)
