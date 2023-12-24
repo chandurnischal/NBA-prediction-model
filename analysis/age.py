@@ -2,7 +2,8 @@ import json
 import utils as u
 import pandas as pd
 import matplotlib.pyplot as plt
-from tqdm import tqdm 
+from tqdm import tqdm
+
 
 def PER(row) -> float:
     return (
@@ -20,35 +21,40 @@ def PER(row) -> float:
         - row["tov"] * 53.897
     ) * (1 / row["mp"])
 
-def plotPER(playerID):
 
-    query = '''
+def plotPER(playerID):
+    query = """
     select * from player_total where player_id = {} and is_regular=1 order by year
-    '''.format(playerID)
+    """.format(
+        playerID
+    )
 
     data = u.sqlTodf(query, creds).apply(pd.to_numeric, errors="ignore")
     data.columns = [column.lower() for column in data.columns]
 
-    name = data[data['player_id'] == playerID]['player'].iloc[0].replace('*', '')
+    name = data[data["player_id"] == playerID]["player"].iloc[0].replace("*", "")
 
-    startYear = data['year'].min()
-    endYear = data['year'].max()
+    startYear = data["year"].min()
+    endYear = data["year"].max()
 
-
-    data['per'] = PER(data)
+    data["per"] = PER(data)
 
     plt.figure(figsize=(15, 8))
-    plt.title('Player Efficiency Rating of {} ({}-{})'.format(name, startYear, endYear), fontdict={"size": 20})
-    plt.xlabel('Year', fontdict={'size': 15})
-    plt.ylabel('Player Efficiency Rating', fontdict={'size': 15})
+    plt.title(
+        "Player Efficiency Rating of {} ({}-{})".format(name, startYear, endYear),
+        fontdict={"size": 20},
+    )
+    plt.xlabel("Year", fontdict={"size": 15})
+    plt.ylabel("Player Efficiency Rating", fontdict={"size": 15})
 
-    plt.grid(linestyle='--')
-    plt.plot(data['year'], data['per'])
-    plt.xticks(data['year'])
-    plt.savefig('data/plots/{}.png'.format(playerID))
+    plt.grid(linestyle="--")
+    plt.plot(data["year"], data["per"])
+    plt.xticks(data["year"])
+    plt.savefig("data/plots/{}.png".format(playerID))
     plt.show()
 
-with open('creds.json') as file:
+
+with open("creds.json") as file:
     creds = json.load(file)
 
 playerIDS = [222, 100, 125, 569, 177, 692, 420, 324, 475, 405, 2238]
@@ -58,4 +64,3 @@ playerIDS = [222, 100, 125, 569, 177, 692, 420, 324, 475, 405, 2238]
 
 for playerID in tqdm(playerIDS):
     plotPER(playerID)
-

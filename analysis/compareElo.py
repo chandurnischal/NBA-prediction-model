@@ -41,11 +41,11 @@ def compareTeamElos(teamIDS: list) -> None:
     plt.title("Team Elo Comparison Season 2023", fontdict={"size": 20})
     plt.legend()
     plt.axhline(y=1500, c="k")
-    plt.xlabel('Date', fontdict={'size': 15})
-    plt.ylabel('Elo', fontdict={'size': 15})
+    plt.xlabel("Date", fontdict={"size": 15})
+    plt.ylabel("Elo", fontdict={"size": 15})
     plt.grid("--")
     # plt.show()
-    plt.savefig('data/plots/elo.png')
+    plt.savefig("data/plots/elo.png")
 
 
 ids = [6, 5, 12, 17]
