@@ -7,6 +7,11 @@ from PIL import Image
 from collections import Counter
 import prediction as p
 import time
+from tqdm import tqdm
+import warnings
+import utils as u
+
+warnings.filterwarnings("ignore")
 
 
 def themeExtractor(teamID, common: int = 1):
@@ -25,22 +30,8 @@ def themeExtractor(teamID, common: int = 1):
     return themeExtractor
 
 
-def sqlTodf(query: str, creds: dict) -> pd.DataFrame:
-    with mc.connect(**creds) as conn:
-        cur = conn.cursor()
-
-        cur.execute(query)
-        column_names = [column[0] for column in cur.description]
-        rows = cur.fetchall()
-
-    data = pd.DataFrame(rows, columns=column_names)
-
-    return data
-
-
 today = datetime.now()
 todayDate = today.strftime("%Y-%m-%d")
-year = today.year + 1
 
 with open("creds.json") as file:
     creds = json.load(file)
@@ -51,7 +42,7 @@ select home_id, home, visitor_id, visitor from games where date = '{}'
     todayDate
 )
 
-data = sqlTodf(query, creds).astype(str)
+data = u.sqlTodf(query, creds).astype(str)
 
 app = Flask(__name__)
 
@@ -75,7 +66,7 @@ def game(home_id, visitor_id):
         home_id, visitor_id
     )
 
-    logos = sqlTodf(logoQuery, creds)
+    logos = u.sqlTodf(logoQuery, creds)
 
     teamQuery = """
     select * from conference_standings where team_id in ({}, {}) and year = (select max(year) from conference_standings)
@@ -83,7 +74,7 @@ def game(home_id, visitor_id):
         home_id, visitor_id
     )
 
-    team = sqlTodf(teamQuery, creds).reset_index()
+    team = u.sqlTodf(teamQuery, creds).reset_index()
 
     home_team, visitor_team = (
         logos[logos["ID"] == int(home_id)]["Team"].iloc[0],
@@ -96,7 +87,7 @@ def game(home_id, visitor_id):
         home_id, visitor_id
     )
 
-    players = sqlTodf(playerQuery, creds)
+    players = u.sqlTodf(playerQuery, creds)
 
     homePlayers = (
         players[players["team_id"] == int(home_id)].reset_index(drop=True).head(5)
@@ -112,7 +103,7 @@ def game(home_id, visitor_id):
         home_id
     )
 
-    arena = sqlTodf(arenaQuery, creds).iloc[0].values[0]
+    arena = u.sqlTodf(arenaQuery, creds).iloc[0].values[0]
 
     c1, c2 = themeExtractor(home_id), themeExtractor(visitor_id)
 
@@ -132,7 +123,7 @@ def game(home_id, visitor_id):
 
     end = time.time()
 
-    latency = end - start
+    latency = round(end - start, 2)
 
     app.logger.info("Latency: {}s".format(latency))
 
@@ -152,6 +143,43 @@ def game(home_id, visitor_id):
         winPerc=int(probs["YES"] * 100),
         lossPerc=int(probs["NO"] * 100),
     )
+
+
+@app.route("/summary")
+def summary():
+    n = len(data.index)
+
+    yes, no = [], []
+    hcolor, vcolor = [], []
+
+    for _, row in tqdm(data.iterrows(), total=n, desc="Processing games", unit="game"):
+        home_id, visitor_id = row["home_id"], row["visitor_id"]
+        outcome = p.classify(home_id, visitor_id)
+        c1, c2 = themeExtractor(home_id), themeExtractor(visitor_id)
+
+        if (c1[0] - c2[0]) + (c1[1] - c2[1]) + (c1[2] - c2[2]) <= 20:
+            c1 = themeExtractor(home_id, 2)
+
+        if c1 == (255, 255, 255):
+            c1 = themeExtractor(home_id, 2)
+
+        if c2 == (255, 255, 255):
+            c2 = themeExtractor(visitor_id, 2)
+
+        color1 = "rgb({}, {}, {})".format(c1[0], c1[1], c1[2])
+        color2 = "rgb({}, {}, {})".format(c2[0], c2[1], c2[2])
+        hcolor.append(color1)
+        vcolor.append(color2)
+
+        yes.append(round(outcome["YES"] * 100))
+        no.append(round(outcome["NO"] * 100))
+
+    data["hcolor"] = hcolor
+    data["vcolor"] = vcolor
+    data["YES"] = yes
+    data["NO"] = no
+
+    return render_template("summary.html", date=formattedDate, data=data)
 
 
 if __name__ == "__main__":

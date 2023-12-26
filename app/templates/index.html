@@ -11,8 +11,8 @@
 
 <body>
     <header>
-        <img src="../static/logos/NBA.png" alt="NBA Logo" class="img-fluid mt-5">
-        <h2 align="center">Games Today</h2>
+        <a href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="img-fluid mt-5"></a>
+        <h1 align="center">Games Today</h1>
         <h3 align="center">{{ date }}</h3>
     </header>
 
@@ -22,6 +22,7 @@
                 <th> # </th>
                 <th> Home Team </th>
                 <th> Visitor Team </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -39,11 +40,15 @@
                 </td>
                 <td align="center">
                     <a href="{{ url_for('game', home_id=row['home_id'], visitor_id=row['visitor_id']) }}">Details</a>
-                </td> 
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <div style="display: flex; justify-content: space-around">
+        <a href="{{ url_for('summary') }}" class="btn btn-outline-info" role="button"
+            aria-pressed="true">Predictions</a>
+    </div>
     <footer>
         <p>&copy; 2023 NBA Media Ventures, LLC. All rights reserved.</p>
     </footer>
