@@ -5,4 +5,4 @@ start = perf_counter()
 os.system("python processing/load.py")
 os.system("python processing/clean.py")
 
-print("Execution Time: {}s".format(perf_counter() - start))
+print("Execution Time: {} minutes".format(round((perf_counter() - start) / 60, 1)))
