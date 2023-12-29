@@ -96,16 +96,8 @@ Configure the credentials accordingly.
 
 In order to have the best possible prediction, it is preferred to have the latest data.
 
-To obtain the most recent data (data up until the previous day's games), run the following command.
-
 ```
-python processing/process.py
-```
-
-#### Use Flask App to view today's games.
-
-```
-python app/app.py
+python main.py
 ```
 
 Use http://127.0.0.1:5000 to view the landing page for today's games.
