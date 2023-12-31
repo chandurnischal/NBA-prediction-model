@@ -319,7 +319,7 @@ class Games:
 
         dataList = []
 
-        for month in tqdm(urls):
+        for month in tqdm(urls, desc="Games Schedule", unit="month"):
             dataList.append(self.monthlySchedule(month["href"]))
             sleep(randint(5, 10))
 

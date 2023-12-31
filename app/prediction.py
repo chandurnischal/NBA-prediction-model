@@ -9,6 +9,7 @@ from sklearn.preprocessing import StandardScaler
 import utils as u
 import numpy as np
 from datetime import datetime
+import requests
 
 with open("creds.json") as file:
     creds = json.load(file)
@@ -16,7 +17,7 @@ with open("creds.json") as file:
 
 def trainingFunction(creds, homeFeatures, visitorFeatures):
     query = """
-    select * from elo where is_regular=1
+    select * from elo
     """
 
     data = u.sqlTodf(query, creds)
@@ -41,10 +42,22 @@ def trainingFunction(creds, homeFeatures, visitorFeatures):
 
 
 def getLatestFeature(teamID, homeFeatures, visitorFeatures) -> pd.DataFrame:
+    currentSeason = datetime.now().year + 1
+
+    url = """https://www.basketball-reference.com/leagues/NBA_{}.html""".format(
+        currentSeason
+    )
+
+    r = requests.get(url)
+
+    if r.status_code != 200:
+        currentSeason = currentSeason - 1
+
+
     query = """
-    select * from elo where season={} and is_regular=1
+    select * from elo where season={}
     """.format(
-        datetime.now().year + 1
+        currentSeason
     )
 
     data = u.sqlTodf(query, creds)

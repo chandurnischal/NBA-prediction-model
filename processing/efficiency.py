@@ -51,7 +51,7 @@ with mc.connect(**creds) as conn:
     cur = conn.cursor()
 
     query = """
-    select * from team_total
+    select * from team_total order by year
     """
 
     cur.execute(query)

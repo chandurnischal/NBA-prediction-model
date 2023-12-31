@@ -8,7 +8,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from time import sleep
 from random import randint
-import mysql.connector as mc
+import requests
 
 
 def pushToDatabase(data: pd.DataFrame, tablename, engine) -> None:
@@ -19,7 +19,7 @@ def pushToDatabase(data: pd.DataFrame, tablename, engine) -> None:
 
 
 def totalStats(player, team: e.Teams, year: int, engine) -> None:
-    print("Extracting Total Stats...\n")
+    print("Extracting Total Stats...")
     regularPlayer = player[0].totalStats(year)
     sleep(randint(5, 10))
     playoffsPlayer = player[1].totalStats(year)
@@ -36,7 +36,7 @@ def totalStats(player, team: e.Teams, year: int, engine) -> None:
 
 
 def perGameStats(player, team: e.Teams, year: int, engine) -> None:
-    print("Extracting Per Game Stats...\n")
+    print("Extracting Per Game Stats...")
     regularPlayer = player[0].perGameStats(year)
     sleep(randint(5, 10))
 
@@ -56,7 +56,7 @@ def perGameStats(player, team: e.Teams, year: int, engine) -> None:
 
 
 def perMinuteStats(player, year: int, engine) -> None:
-    print("Extracting Per Minute Stats...\n")
+    print("Extracting Per Minute Stats...")
     regularPlayer = player[0].perMinuteStats(year)
     sleep(randint(5, 10))
 
@@ -68,7 +68,7 @@ def perMinuteStats(player, year: int, engine) -> None:
 
 
 def perPossessionStats(player, year: int, engine) -> None:
-    print("Extracting Per Possession Stats...\n")
+    print("Extracting Per Possession Stats...")
     regularPlayer = player[0].perPossessionStats(year)
     sleep(randint(5, 10))
 
@@ -88,7 +88,7 @@ def perPossessionStats(player, year: int, engine) -> None:
 
 
 def advancedStats(player, year: int, engine) -> None:
-    print("Extracting Advanced Stats...\n")
+    print("Extracting Advanced Stats...")
     regularPlayer = player[0].advancedStats(year)
     sleep(randint(5, 10))
     playoffsPlayer = player[1].advancedStats(year)
@@ -108,29 +108,39 @@ engine = create_engine(
 )
 
 games = e.Games()
-currentYear = datetime.now().year + 1
+currentSeason = datetime.now().year + 1
+
+url = """https://www.basketball-reference.com/leagues/NBA_{}.html""".format(
+    currentSeason
+)
+
+r = requests.get(url)
+
+if r.status_code != 200:
+    currentSeason = currentSeason - 1
 
 
 player = e.Players("regular"), e.Players("playoffs")
 team = e.Teams("regular"), e.Teams("playoffs")
 
 
-print("Extracting Games schedule...\n")
-currentSchedule = games.seasonSchedule(currentYear)
+currentSchedule = games.seasonSchedule(currentSeason)
 pushToDatabase(currentSchedule, "games", engine)
 
-print("Extracting playoffs schedule...\n")
-games.playoffsDates((1980, currentYear)).to_sql(
+print("Extracting Playoffs schedule...")
+games.playoffsDates((1980, currentSeason)).to_sql(
     "playoffs_dates", index=False, con=engine, if_exists="replace"
 )
 sleep(randint(5, 10))
 
-print("Extracting Conference Standings...\n")
-pushToDatabase(team[0].conferenceStandings(currentYear), "conference_standings", engine)
+print("Extracting Conference Standings...")
+pushToDatabase(
+    team[0].conferenceStandings(currentSeason), "conference_standings", engine
+)
 sleep(randint(5, 10))
 
-totalStats(player, team, currentYear, engine)
-perGameStats(player, team, currentYear, engine)
-perMinuteStats(player, currentYear, engine)
-perPossessionStats(player, currentYear, engine)
-advancedStats(player, currentYear, engine)
+totalStats(player, team, currentSeason, engine)
+perGameStats(player, team, currentSeason, engine)
+perMinuteStats(player, currentSeason, engine)
+perPossessionStats(player, currentSeason, engine)
+advancedStats(player, currentSeason, engine)

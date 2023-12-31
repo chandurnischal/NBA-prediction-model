@@ -32,23 +32,17 @@ with mc.connect(**creds) as conn:
     cur = conn.cursor()
     conn.autocommit = True
 
-    print("Cleaning data")
-
-    for query in tqdm(queries):
+    for query in tqdm(queries, desc="Cleaning Data", unit="query"):
         try:
             cur.execute(query)
 
         except:
             pass
 
-    print("Calculating Elo")
     os.system("python processing/elo.py")
-    print("Calculating Efficiency")
     os.system("python processing/efficiency.py")
 
-    print("Processing data")
-
-    for query in tqdm(preprocessQueries):
+    for query in tqdm(preprocessQueries, desc="Cleaning Data", unit="query"):
         try:
             cur.execute(query)
         except:
