@@ -29,7 +29,7 @@ with mc.connect(**creds) as conn:
     visitorEloList = []
 
     for index, row in tqdm(
-        data.iterrows(), total=data.shape[0], desc="Processing Games", unit="row"
+        data.iterrows(), total=data.shape[0], desc="Calculating Elo", unit="row"
     ):
         home = row["home"]
         visitor = row["visitor"]

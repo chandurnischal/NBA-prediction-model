@@ -11,7 +11,9 @@
 
 <body>
     <header>
-        <a href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="img-fluid mt-5"></a>
+        <div>
+            <a href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="img-fluid mt-5"></a>
+        </div>
         <h1 align="center">Games Today</h1>
         <h3 align="center">{{ date }}</h3>
     </header>
@@ -21,6 +23,7 @@
             <tr>
                 <th> # </th>
                 <th> Home Team </th>
+                <th></th>
                 <th> Visitor Team </th>
                 <th></th>
             </tr>
@@ -32,6 +35,9 @@
                 <td><img src="{{ url_for('static', filename='../static/logos/' + row['home_id'] + '.png') }}"
                         alt="{{ row['home_id'] }}" class="team-logo">
                     {{ row['home'] }}
+                </td>
+                <td style="vertical-align: middle;">
+                    v/s
                 </td>
                 <td>
                     <img src="{{ url_for('static', filename='../static/logos/' + row['visitor_id'] + '.png') }}"
@@ -46,11 +52,11 @@
         </tbody>
     </table>
     <div style="display: flex; justify-content: space-around">
-        <a href="{{ url_for('summary') }}" class="btn btn-outline-info" role="button"
+        <a href="{{ url_for('summary') }}" class="btn btn-primary" role="button"
             aria-pressed="true">Predictions</a>
     </div>
     <footer>
-        <p>&copy; 2023 NBA Media Ventures, LLC. All rights reserved.</p>
+        <p>&copy; 2024 NBA Media Ventures, LLC. All rights reserved.</p>
     </footer>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>

@@ -53,11 +53,7 @@
         </table>
     </div>
     <h2 align=" center">Arena: {{ arena }}</h2>
-            <br><br>
             <div>
-              <header style=" text-align: center;">
-                <h3>Team Stats</h3>
-              </header>
               <table class="table table-hover">
                 <thead>
                   <tr>
@@ -96,7 +92,7 @@
 
             <div>
               <header>
-                <h3 style="text-align: center;">Top 5 Player Stats Per Game</h3>
+                <h3 style="text-align: center;">Top Players to Watch</h3>
               </header>
 
               <table class="table table-hover">
@@ -114,6 +110,7 @@
                       <table class="table table-striped">
                         <thead>
                           <tr>
+                            <th>#</th>
                             <th>Player</th>
                             <th>POS</th>
                             <th>PTS</th>
@@ -127,6 +124,7 @@
                         <tbody>
                           {% for index, row in home_players.iterrows() %}
                           <tr>
+                            <td>{{ index + 1 }}</td>
                             <td>{{ row['player'] }}</td>
                             <td>{{ row['pos'] }}</td>
                             <td>{{ row['pts'] }}</td>
@@ -144,6 +142,7 @@
                       <table class="table table-striped">
                         <thead>
                           <tr>
+                            <th>#</th>
                             <th>Player</th>
                             <th>POS</th>
                             <th>PTS</th>
@@ -157,6 +156,7 @@
                         <tbody>
                           {% for index, row in visitor_players.iterrows() %}
                           <tr>
+                            <td>{{ index + 1 }}</td>
                             <td>{{ row['player'] }}</td>
                             <td>{{ row['pos'] }}</td>
                             <td>{{ row['pts'] }}</td>
@@ -197,7 +197,7 @@
             </header>
 
             <footer>
-              <p>&copy; 2023 NBA Media Ventures, LLC. All rights reserved.</p>
+              <p>&copy; 2024 NBA Media Ventures, LLC. All rights reserved.</p>
             </footer>
             <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>

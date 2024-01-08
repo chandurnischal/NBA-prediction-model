@@ -53,7 +53,6 @@ def getLatestFeature(teamID, homeFeatures, visitorFeatures) -> pd.DataFrame:
     if r.status_code != 200:
         currentSeason = currentSeason - 1
 
-
     query = """
     select * from elo where season={}
     """.format(

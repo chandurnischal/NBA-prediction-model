@@ -1,6 +1,4 @@
-import mysql.connector as mc
 import json
-import pandas as pd
 from datetime import datetime
 from flask import Flask, render_template
 from PIL import Image
@@ -69,9 +67,9 @@ def game(home_id, visitor_id):
     logos = u.sqlTodf(logoQuery, creds)
 
     teamQuery = """
-    select * from conference_standings where team_id in ({}, {}) and year = (select max(year) from conference_standings)
+    select * from conference_standings where team_id in ({}, {}) and year = (select max(year) from conference_standings) order by (team_id = {}) desc, team_id;
     """.format(
-        home_id, visitor_id
+        home_id, visitor_id, home_id
     )
 
     team = u.sqlTodf(teamQuery, creds).reset_index()
@@ -82,7 +80,7 @@ def game(home_id, visitor_id):
     )
 
     playerQuery = """
-    select player, team_id, tm, pos, pts, ast, blk, trb, stl, mp from player_per_game where team_id in ({}, {}) and is_regular=1 and year = (select max(year) from player_per_game) order by pts desc
+    select player, team_id, tm, pos, pts, ast, blk, trb, stl, mp from player_per_game where team_id in ({}, {}) and is_regular=1 and year = (select max(year) from player_per_game) order by per desc
     """.format(
         home_id, visitor_id
     )
@@ -90,11 +88,11 @@ def game(home_id, visitor_id):
     players = u.sqlTodf(playerQuery, creds)
 
     homePlayers = (
-        players[players["team_id"] == int(home_id)].reset_index(drop=True).head(5)
+        players[players["team_id"] == int(home_id)].reset_index(drop=True).head(7)
     )
 
     visitorPlayers = (
-        players[players["team_id"] == int(visitor_id)].reset_index(drop=True).head(5)
+        players[players["team_id"] == int(visitor_id)].reset_index(drop=True).head(7)
     )
 
     arenaQuery = """
@@ -141,7 +139,7 @@ def game(home_id, visitor_id):
         color1=color1,
         color2=color2,
         winPerc=int(probs["YES"] * 100),
-        lossPerc=int(probs["NO"] * 100),
+        lossPerc=int((1 - probs["YES"]) * 100),
     )
 
 

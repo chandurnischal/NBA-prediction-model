@@ -32,7 +32,7 @@ with mc.connect(**creds) as conn:
     cur = conn.cursor()
     conn.autocommit = True
 
-    for query in tqdm(queries, desc="Cleaning Data", unit="query"):
+    for query in tqdm(queries, desc="Preprocessing Data", unit="query"):
         try:
             cur.execute(query)
 
