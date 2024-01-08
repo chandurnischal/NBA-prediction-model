@@ -20,4 +20,4 @@ alter table elo add column home_victory text;
 update elo set home_victory = 'YES' where mov > 0;
 update elo set home_victory = 'NO' where mov < 0;
 alter table player_per_game add column per decimal(10, 2);
-update player_per_game set per = (`FG` * 85.91) + (`STL` * 53.897) + (`3P` * 51.757) + (`FT` * 46.845) + (`BLK` * 39.19) + (`ORB` * 39.19) + (`AST` * 34.677) + (`DRB` * 14.707) - (`PF` * 17.174) - ((`FTA` - `FT`) * 20.091) - ((`FGA` - `FG`) * 39.190) - (`TOV` * 53.897);
+update player_per_game set per = (`FG` * 85.91) + (`STL` * 53.897) + (`3P` * 51.757) + (`FT` * 46.845) + (`BLK` * 39.19) + (`ORB` * 39.19) + (`AST` * 34.677) + (`DRB` * 14.707) - (`PF` * 17.174) - ((`FTA` - `FT`) * 20.091) - ((`FGA` - `FG`) * 39.190) - (`TOV` * 53.897);git 
