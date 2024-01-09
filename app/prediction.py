@@ -10,6 +10,7 @@ import utils as u
 import numpy as np
 from datetime import datetime
 import requests
+import joblib
 
 with open("creds.json") as file:
     creds = json.load(file)
@@ -82,7 +83,7 @@ def makeFeature(home_id: int, visitor_id: int, homeFeatures, visitorFeatures):
     return np.array([home.values.tolist()[0] + visitor.values.tolist()[0]])
 
 
-def classify(home_id, visitor_id):
+def classifySlow(home_id, visitor_id):
     home_id = int(home_id)
     visitor_id = int(visitor_id)
     homeFeatures = ["home_elo", "home_per", "home_eff", "home_win_perc"]
@@ -91,3 +92,22 @@ def classify(home_id, visitor_id):
     instance = makeFeature(home_id, visitor_id, homeFeatures, visitorFeatures)
     probs = model.predict_proba(instance)[0]
     return {"NO": round(probs[0], 2), "YES": round(probs[1], 2)}
+
+def classify(home_id, visitor_id):
+    home_id = int(home_id)
+    visitor_id = int(visitor_id)
+
+    features = ['elo', 'per', 'eff', 'win_perc']
+    homeFeatures = ['home_{}'.format(feature) for feature in features]
+    visitorFeatures = ['visitor_{}'.format(feature) for feature in features]
+
+    instance = makeFeature(home_id, visitor_id, homeFeatures, visitorFeatures)
+    params = joblib.load('app/weights.joblib')
+    weights = params['weights']
+    intercept = params['intercept']
+
+    predictions = np.dot(instance, weights[0]) + intercept
+    probs = 1 / (1 + np.exp(-predictions))
+    yes = round(probs[0], 2)
+    no = 1 - yes
+    return {'YES': yes, 'NO': no} 

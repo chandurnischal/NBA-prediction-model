@@ -9,7 +9,7 @@ from sqlalchemy import create_engine
 from time import sleep
 from random import randint
 import requests
-
+from training import trainModel
 
 def pushToDatabase(data: pd.DataFrame, tablename, engine) -> None:
     try:
@@ -144,3 +144,7 @@ perGameStats(player, team, currentSeason, engine)
 perMinuteStats(player, currentSeason, engine)
 perPossessionStats(player, currentSeason, engine)
 advancedStats(player, currentSeason, engine)
+
+print('Training model...')
+features = ["elo", "per", "eff", "win_perc"]
+trainModel(creds, features)
