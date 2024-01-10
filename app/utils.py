@@ -53,5 +53,4 @@ def getTeamHistory(team_id:int, creds:dict) -> list:
                 colors.append(l)
 
     data['color'] = colors
-    print(data)
     return colors
