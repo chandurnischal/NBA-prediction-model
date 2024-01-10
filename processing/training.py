@@ -26,3 +26,10 @@ def trainModel(creds, features):
     joblib.dump(params, 'app/weights.joblib')
 
     return None
+
+with open('creds.json') as file:
+    creds = json.load(file)
+
+print('Training model...')
+features = ["elo", "per", "eff", "win_perc"]
+trainModel(creds, features)

@@ -9,7 +9,6 @@ from sqlalchemy import create_engine
 from time import sleep
 from random import randint
 import requests
-from training import trainModel
 
 def pushToDatabase(data: pd.DataFrame, tablename, engine) -> None:
     try:
@@ -21,13 +20,13 @@ def pushToDatabase(data: pd.DataFrame, tablename, engine) -> None:
 def totalStats(player, team: e.Teams, year: int, engine) -> None:
     print("Extracting Total Stats...")
     regularPlayer = player[0].totalStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
     playoffsPlayer = player[1].totalStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
     regularTeam = team[0].totalStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
     playoffsTeam = team[1].totalStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     pushToDatabase(regularPlayer, "player_total", engine)
     pushToDatabase(playoffsPlayer, "player_total", engine)
@@ -38,16 +37,16 @@ def totalStats(player, team: e.Teams, year: int, engine) -> None:
 def perGameStats(player, team: e.Teams, year: int, engine) -> None:
     print("Extracting Per Game Stats...")
     regularPlayer = player[0].perGameStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     playoffsPlayer = player[1].perGameStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     regularTeam = team[0].perGameStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     playoffsTeam = team[1].perGameStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     pushToDatabase(regularPlayer, "player_per_game", engine)
     pushToDatabase(playoffsPlayer, "player_per_game", engine)
@@ -58,10 +57,10 @@ def perGameStats(player, team: e.Teams, year: int, engine) -> None:
 def perMinuteStats(player, year: int, engine) -> None:
     print("Extracting Per Minute Stats...")
     regularPlayer = player[0].perMinuteStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     playoffsPlayer = player[1].perMinuteStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     pushToDatabase(regularPlayer, "player_per_minute", engine)
     pushToDatabase(playoffsPlayer, "player_per_minute", engine)
@@ -70,16 +69,16 @@ def perMinuteStats(player, year: int, engine) -> None:
 def perPossessionStats(player, year: int, engine) -> None:
     print("Extracting Per Possession Stats...")
     regularPlayer = player[0].perPossessionStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     playoffsPlayer = player[1].perPossessionStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     regularTeam = team[0].perPossStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     playoffsTeam = team[1].perPossStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     pushToDatabase(regularPlayer, "player_per_possession", engine)
     pushToDatabase(playoffsPlayer, "player_per_possession", engine)
@@ -90,9 +89,9 @@ def perPossessionStats(player, year: int, engine) -> None:
 def advancedStats(player, year: int, engine) -> None:
     print("Extracting Advanced Stats...")
     regularPlayer = player[0].advancedStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
     playoffsPlayer = player[1].advancedStats(year)
-    sleep(randint(5, 10))
+    sleep(randint(2, 5))
 
     pushToDatabase(regularPlayer, "player_advanced", engine)
     pushToDatabase(playoffsPlayer, "player_advanced", engine)
@@ -131,20 +130,16 @@ print("Extracting Playoffs schedule...")
 games.playoffsDates((1980, currentSeason)).to_sql(
     "playoffs_dates", index=False, con=engine, if_exists="replace"
 )
-sleep(randint(5, 10))
+sleep(randint(2, 5))
 
 print("Extracting Conference Standings...")
 pushToDatabase(
     team[0].conferenceStandings(currentSeason), "conference_standings", engine
 )
-sleep(randint(5, 10))
+sleep(randint(2, 5))
 
 totalStats(player, team, currentSeason, engine)
 perGameStats(player, team, currentSeason, engine)
 perMinuteStats(player, currentSeason, engine)
 perPossessionStats(player, currentSeason, engine)
 advancedStats(player, currentSeason, engine)
-
-print('Training model...')
-features = ["elo", "per", "eff", "win_perc"]
-trainModel(creds, features)

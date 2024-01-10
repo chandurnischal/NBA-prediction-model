@@ -6,3 +6,4 @@ __pycache__
 errors.csv
 today.csv
 tracker.xlsx
+weights.jobglib

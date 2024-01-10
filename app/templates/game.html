@@ -49,6 +49,21 @@
               src="{{ url_for('static', filename = '../static/logos/' + visitor_id + '.png') }}"
               alt="{{ visitor_id }} Logo not available" class="team-logo""> </th>
             </tr>
+          <tr>
+            <th>
+              {% for color in homeHistory %}
+              <div style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display: inline-block; margin-right: 5px;"></div>
+              {% endfor %}
+      
+            </th>
+            <th></th>
+            <th>
+              {% for color in visitorHistory %}
+              <div style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display: inline-block; margin-right: 5px;"></div>
+             {% endfor %}
+      
+            </th>
+          </tr>
           </thead>
         </table>
     </div>

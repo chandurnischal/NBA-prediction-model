@@ -321,7 +321,7 @@ class Games:
 
         for month in tqdm(urls, desc="Games Schedule", unit="month"):
             dataList.append(self.monthlySchedule(month["href"]))
-            sleep(randint(5, 10))
+            sleep(randint(2, 5))
 
         data = pd.concat(dataList)
 
