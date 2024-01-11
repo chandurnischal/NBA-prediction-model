@@ -86,7 +86,7 @@ def game(home_id, visitor_id):
 
     c1, c2 = u.themeExtractor(home_id), u.themeExtractor(visitor_id)
 
-    if (c1[0] - c2[0]) + (c1[1] - c2[1]) + (c1[2] - c2[2]) <= 20:
+    if (c1[0] - c2[0]) + (c1[1] - c2[1]) + (c1[2] - c2[2]) <= 50:
         c1 = u.themeExtractor(home_id, 2)
 
     if c1 == (255, 255, 255):
