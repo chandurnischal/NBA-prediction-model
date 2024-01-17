@@ -220,5 +220,9 @@ def conference():
 
     return render_template("conference.html", east=east, west=west, year=year)
 
+@app.route('/players')
+def players():
+    return render_template("players.html")
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -10,14 +10,26 @@
 </head>
 
 <body>
-    <a href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="rounded float-left"></a>
-    <a href="/conference"><img src="../static/logos/{{ note }}.png" alt="{{ note }}" class="rounded float-right"></a>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="rounded float-left"></a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
+                </li>
+        </div>
+        <a class="navbar-brand" href="/conference"><img src="../static/logos/{{ note }}.png" alt="{{ note }}" class="rounded float-right"></a>
+    </nav>
+
     <header style="text-align: center;">
         <img src="../static/logos/{{ team.iloc[0]['team_id'] }}.png" alt="{{ team.iloc[0]['team_id'] }}"
             class="img-fluid mt-5">
         <h1>{{ team.iloc[0]['Team'] }}</h1>
-        <h3>No.{{ confPos + 1 }} in {{ note }} Conference</h3>
-        <h3>No.{{ leaguePos + 1 }} in the League</h3>
+        <h3>No. {{ confPos + 1 }} in the {{ note }} Conference</h3>
+        <h3>No. {{ leaguePos + 1 }} in the League</h3>
         <h4>Season: {{ team.iloc[0]['Year'] }}</h4>
     </header>
     <br><br><br>
