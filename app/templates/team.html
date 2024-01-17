@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='../static/css/game.css') }}">
+    <title>{{ team.iloc[0]['Team'] }}</title>
+</head>
+
+<body>
+    <a href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="rounded float-left"></a>
+    <a href="/conference"><img src="../static/logos/{{ note }}.png" alt="{{ note }}" class="rounded float-right"></a>
+    <header style="text-align: center;">
+        <img src="../static/logos/{{ team.iloc[0]['team_id'] }}.png" alt="{{ team.iloc[0]['team_id'] }}"
+            class="img-fluid mt-5">
+        <h1>{{ team.iloc[0]['Team'] }}</h1>
+        <h3>No.{{ confPos + 1 }} in {{ note }} Conference</h3>
+        <h3>No.{{ leaguePos + 1 }} in the League</h3>
+        <h4>Season: {{ team.iloc[0]['Year'] }}</h4>
+    </header>
+    <br><br><br>
+    <div>
+        <h2>Basic Stats</h2>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Win</th>
+                    <th>Loss</th>
+                    <th>Total Games</th>
+                    <th>Win Percentage</th>
+                    <th>Games Behind</th>
+                    <th>Points Per Game</th>
+                    <th>Opp. Points Per Game</th>
+                    <th>SRS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, row in teamRow.iterrows() %}
+                <tr>
+                    <td>{{ row['W'] }}</td>
+                    <td>{{ row['L'] }}</td>
+                    <td>{{ row['T'] }}</td>
+                    <td>{{ row['W%'] }}%</td>
+                    <td>{{ row['GB'] }}</td>
+                    <td>{{ row['PS/G'] }}</td>
+                    <td>{{ row['PA/G'] }}</td>
+                    <td>{{ row['SRS'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>PTS</th>
+                    <th>AST</th>
+                    <th>BLK</th>
+                    <th>TRB</th>
+                    <th>STL</th>
+                    <th>FG%</th>
+                    <th>2P%</th>
+                    <th>3P%</th>
+                    <th>FT%</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ team.iloc[0]['PTS'] }}</td>
+                    <td>{{ team.iloc[0]['AST'] }}</td>
+                    <td>{{ team.iloc[0]['BLK'] }}</td>
+                    <td>{{ team.iloc[0]['TRB'] }}</td>
+                    <td>{{ team.iloc[0]['STL'] }}</td>
+                    <td>{{ team.iloc[0]['FG%'] * 100 }}</td>
+                    <td>{{ team.iloc[0]['2P%'] * 100 }}</td>
+                    <td>{{ team.iloc[0]['3P%'] * 100 }}</td>
+                    <td>{{ team.iloc[0]['FT%'] * 100 }}</td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br><br><br>
+    <div>
+        <h2>Player Stats</h2>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Player</th>
+                    <th>Age</th>
+                    <th>POS</th>
+                    <th>G</th>
+                    <th>MP</th>
+                    <th>PTS</th>
+                    <th>AST</th>
+                    <th>STL</th>
+                    <th>TRB</th>
+                    <th>BLK</th>
+                    <th>TOV</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, row in player.iterrows() %}
+                <tr>
+                    <td>{{ index + 1}}</td>
+                    <td>{{ row['Player'] }}</td>
+                    <td>{{ row['Age'] }}</td>
+                    <td>{{ row['Pos'] }}</td>
+                    <td>{{ row['G'] }}</td>
+                    <td>{{ row['MP'] }}</td>
+                    <td>{{ row['PTS'] }}</td>
+                    <td>{{ row['AST'] }}</td>
+                    <td>{{ row['STL'] }}</td>
+                    <td>{{ row['TRB'] }}</td>
+                    <td>{{ row['BLK'] }}</td>
+                    <td>{{ row['TOV'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 NBA Media Ventures, LLC. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

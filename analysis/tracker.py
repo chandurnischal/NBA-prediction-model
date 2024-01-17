@@ -7,7 +7,7 @@ x = [i + 1 for i in data.index]
 
 lastIndex, lastElement = data.index[-1], data["acc"].iloc[-1]
 
-plt.figure(figsize=(20, 12))
+plt.figure(figsize=(10, 7))
 plt.plot(x, data["acc"])
 plt.title("Cumulative Accuracy")
 plt.xlabel("Matches")

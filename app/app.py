@@ -69,11 +69,11 @@ def game(home_id, visitor_id):
     players = u.sqlTodf(playerQuery, creds)
 
     homePlayers = (
-        players[players["team_id"] == int(home_id)].reset_index(drop=True).head(7)
+        players[players["team_id"] == int(home_id)].reset_index(drop=True).head(5)
     )
 
     visitorPlayers = (
-        players[players["team_id"] == int(visitor_id)].reset_index(drop=True).head(7)
+        players[players["team_id"] == int(visitor_id)].reset_index(drop=True).head(5)
     )
 
     arenaQuery = """
@@ -99,7 +99,8 @@ def game(home_id, visitor_id):
     color2 = "rgb({}, {}, {})".format(c2[0], c2[1], c2[2])
 
     probs = p.classify(home_id, visitor_id)
-
+    winPerc = probs['YES'] * 100
+    lossPerc = 100 - winPerc
     homeHistory = u.getTeamHistory(int(home_id), creds)[::-1]
     visitorHistory = u.getTeamHistory(int(visitor_id), creds)[::-1]
 
@@ -122,8 +123,8 @@ def game(home_id, visitor_id):
         date=formattedDate,
         color1=color1,
         color2=color2,
-        winPerc=int(probs["YES"] * 100),
-        lossPerc=int((1 - probs["YES"]) * 100),
+        winPerc=int(winPerc),
+        lossPerc=int(lossPerc),
         homeHistory = homeHistory,
         visitorHistory = visitorHistory
     )
@@ -141,7 +142,7 @@ def summary():
         outcome = p.classify(home_id, visitor_id)
         c1, c2 = u.themeExtractor(home_id), u.themeExtractor(visitor_id)
 
-        if (c1[0] - c2[0]) + (c1[1] - c2[1]) + (c1[2] - c2[2]) <= 20:
+        if (c1[0] - c2[0]) + (c1[1] - c2[1]) + (c1[2] - c2[2]) <= 50:
             c1 = u.themeExtractor(home_id, 2)
 
         if c1 == (255, 255, 255):
@@ -165,6 +166,59 @@ def summary():
 
     return render_template("summary.html", date=formattedDate, data=data)
 
+@app.route('/team/<team_id>')
+def team(team_id):
+    teamQuery = '''
+    select * from team_per_game where year= (select max(year) from team_per_game where team_id = {}) and team_id={};    
+    '''.format(team_id, team_id)
+
+    team = u.sqlTodf(teamQuery, creds)
+
+    playerQuery = '''
+    select * from player_per_game where year=(select max(year) from team_total where team_id = {}) and team_id={} order by pts desc, g desc;
+    '''.format(team_id, team_id)
+
+    player = u.sqlTodf(playerQuery, creds)
+
+    leagueQuery = '''
+    select * from conference_standings where year = (select max(year) from conference_standings where team_id={})
+    '''.format(team_id)
+
+    league = u.sqlTodf(leagueQuery, creds)
+
+    region = league[league['team_id'] == int(team_id)]['conf'].iloc[0]
+
+    conf = league[league['conf'] == region].reset_index(drop=True)
+
+    if region == "W":
+        note = "Western"
+    else:
+        note = "Eastern"
+
+    league = league.sort_values(by="W%", ascending=False).reset_index(drop=True)
+    leaguePos = league[league['team_id'] == int(team_id)].index[0]
+    conf = conf.sort_values(by="W%", ascending=False).reset_index(drop=True)
+    confPos = conf[conf['team_id'] == int(team_id)].index[0]
+    teamRow = league[league['team_id'] == int(team_id)]
+
+    return render_template("team.html", team=team, player=player.head(10), note=note, leaguePos=leaguePos, confPos=confPos, teamRow=teamRow)
+
+@app.route('/conference')
+def conference():
+    conferenceQuery = '''
+    select * from conference_standings where year=(select max(year) from conference_standings)
+    '''
+
+
+    conf = u.sqlTodf(conferenceQuery, creds)
+    year = conf['Year'].iloc[0]
+    east = conf[conf['conf'] == "E"].reset_index(drop=True)
+    west = conf[conf['conf'] == "W"].reset_index(drop=True)
+
+    east = east.sort_values(by="W%", ascending=False).reset_index(drop=True)
+    west = west.sort_values(by="W%", ascending=False).reset_index(drop=True)
+
+    return render_template("conference.html", east=east, west=west, year=year)
 
 if __name__ == "__main__":
     app.run(debug=True)

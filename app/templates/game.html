@@ -29,7 +29,7 @@
     <table class="table table-borderless">
       <thead>
         <tr>
-          <th>
+          <th style="width: 30%;">
             <h2>{{ home_team }}</h2>
           </th>
           <th>
@@ -40,15 +40,16 @@
           </th>
         </tr>
         <tr>
-          <th scope="col" style="text-align: center;">
-            <img src="{{ url_for('static', filename = '../static/logos/' + home_id + '.png') }}"
-              alt="{{ home_id }} Logo not available" class="team-logo">
+          <th scope="col" style="text-align: center; width: 10%;">
+            <a href="/team/{{ home_id }}"><img src="{{ url_for('static', filename = '../static/logos/' + home_id + '.png') }}"
+              alt="{{ home_id }} Logo not available" class="team-logo"></a>
           </th>
           <th></th>
-          <th scope="col" style="text-align: center;"><img
+          <th scope="col" style="text-align: center; width: 30%;">
+              <a href="/team/{{ visitor_id }}"><img
               src="{{ url_for('static', filename = '../static/logos/' + visitor_id + '.png') }}"
               alt="{{ visitor_id }} Logo not available" class="team-logo""> </th>
-            </tr>
+            </tr></a>
           <tr>
             <th>
               {% for color in homeHistory %}

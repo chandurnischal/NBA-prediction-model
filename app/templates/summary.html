@@ -40,13 +40,13 @@
         <tbody>
             {% for index, row in data.iterrows() %}
             <tr>
-                <td style="width: 10%;">{{ index + 1 }}</td>
-                <td style="width: 25%;"><img
+                <td style="width: 5%;">{{ index + 1 }}</td>
+                <td style="width: 30%;"><a href="/team/{{ row['home_id'] }}"><img
                         src="{{ url_for('static', filename='../static/logos/' + row['home_id'] + '.png') }}"
-                        alt="{{ row['home_id'] }}" class="team-logo">
+                        alt="{{ row['home_id'] }}" class="img-fluid mt-5"></a>
                     {{ row['home'] }}
                 </td>
-                <td style="vertical-align: bottom; width: 40%;">
+                <td style="vertical-align: bottom; width: 35%;">
                     <table class="table">
                         <th>
                         <td style="width: {{ row['YES'] }}%; text-align: left;">{{ row['YES'] }}%</td>
@@ -60,9 +60,9 @@
                         </div>
                     </div>
                 </td>
-                <td style="width: 25%;">
-                    <img src="{{ url_for('static', filename='../static/logos/' + row['visitor_id'] + '.png') }}"
-                        alt="{{ row['visitor_id'] }}" class="team-logo">
+                <td style="width: 30%;">
+                    <a href="/team/{{ row['visitor_id'] }}"><img src="{{ url_for('static', filename='../static/logos/' + row['visitor_id'] + '.png') }}"
+                        alt="{{ row['visitor_id'] }}" class="img-fluid mt-5"></a>
                     {{ row['visitor'] }}
                 </td>
             </tr>

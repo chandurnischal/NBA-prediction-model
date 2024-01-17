@@ -31,29 +31,30 @@
         <tbody>
             {% for index, row in df.iterrows() %}
             <tr>
-                <td>{{ index + 1 }}</td>
-                <td><img src="{{ url_for('static', filename='../static/logos/' + row['home_id'] + '.png') }}"
+                <td style="width: 5%;">{{ index + 1 }}</td>
+                <td style="width: 40%;"><img
+                        src="{{ url_for('static', filename='../static/logos/' + row['home_id'] + '.png') }}"
                         alt="{{ row['home_id'] }}" class="team-logo">
                     {{ row['home'] }}
                 </td>
-                <td style="vertical-align: middle;">
+                <td style="vertical-align: middle; width: 10%;">
                     v/s
                 </td>
-                <td>
+                <td style="width: 40%;">
                     <img src="{{ url_for('static', filename='../static/logos/' + row['visitor_id'] + '.png') }}"
                         alt="{{ row['visitor_id'] }}" class="team-logo">
                     {{ row['visitor'] }}
                 </td>
-                <td align="center">
+                <td style="width: 5%;">
                     <a href="{{ url_for('game', home_id=row['home_id'], visitor_id=row['visitor_id']) }}">Details</a>
                 </td>
+                </a>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <div style="display: flex; justify-content: space-around">
-        <a href="{{ url_for('summary') }}" class="btn btn-primary" role="button"
-            aria-pressed="true">Predictions</a>
+        <a href="{{ url_for('summary') }}" class="btn btn-primary" role="button" aria-pressed="true">Predictions</a>
     </div>
     <footer>
         <p>&copy; 2024 NBA Media Ventures, LLC. All rights reserved.</p>
