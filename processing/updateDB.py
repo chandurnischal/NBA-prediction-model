@@ -10,6 +10,7 @@ from time import sleep
 from random import randint
 import requests
 
+
 def pushToDatabase(data: pd.DataFrame, tablename, engine) -> None:
     try:
         data.to_sql(tablename, con=engine, if_exists="append", index=False)

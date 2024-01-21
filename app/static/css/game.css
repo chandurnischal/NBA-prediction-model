@@ -32,3 +32,9 @@ th, td {
 .conference-table tbody tr:nth-child(10) {
     border-bottom: 2px solid #000;
 }
+
+.player-stats-table {
+    /* width: 50%; */
+    /* margin: auto; */
+    padding: 20px;
+}

@@ -1,11 +1,6 @@
 import json
 import pandas as pd
-from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.preprocessing import StandardScaler
 import utils as u
 import numpy as np
 from datetime import datetime
@@ -16,27 +11,19 @@ with open("creds.json") as file:
     creds = json.load(file)
 
 
-def trainingFunction(creds, homeFeatures, visitorFeatures):
+def trainingFunction(creds, features):
     query = """
     select * from elo
     """
 
     data = u.sqlTodf(query, creds)
-    train = data[data["season"] <= 2023].apply(pd.to_numeric, errors="ignore")
+    train = data.apply(pd.to_numeric, errors="ignore")
 
-    features = homeFeatures + visitorFeatures
     label = ["home_victory"]
 
     trainX, trainY = np.array(train[features]), np.array(train[label]).reshape(-1)
-    # scaler = StandardScaler()
-    # trainX = scaler.fit_transform(trainX)
 
-    # model = GaussianNB()
     model = LogisticRegression()
-    # model = DecisionTreeClassifier(criterion="entropy", random_state=1001, max_depth=5)
-    # model = KNeighborsClassifier(n_neighbors=8)
-    # model = RandomForestClassifier(n_estimators=100, criterion="entropy", max_depth=5, random_state=1001)
-
     model.fit(trainX, trainY)
 
     return model
@@ -93,21 +80,22 @@ def classifySlow(home_id, visitor_id):
     probs = model.predict_proba(instance)[0]
     return {"NO": round(probs[0], 2), "YES": round(probs[1], 2)}
 
+
 def classify(home_id, visitor_id):
     home_id = int(home_id)
     visitor_id = int(visitor_id)
 
-    features = ['elo', 'per', 'eff', 'win_perc']
-    homeFeatures = ['home_{}'.format(feature) for feature in features]
-    visitorFeatures = ['visitor_{}'.format(feature) for feature in features]
+    features = ["elo", "per", "eff", "win_perc"]
+    homeFeatures = ["home_{}".format(feature) for feature in features]
+    visitorFeatures = ["visitor_{}".format(feature) for feature in features]
 
     instance = makeFeature(home_id, visitor_id, homeFeatures, visitorFeatures)
-    params = joblib.load('app/weights.joblib')
-    weights = params['weights']
-    intercept = params['intercept']
+    params = joblib.load("app/weights.joblib")
+    weights = params["weights"]
+    intercept = params["intercept"]
 
     predictions = np.dot(instance, weights[0]) + intercept
     probs = 1 / (1 + np.exp(-predictions))
     yes = round(probs[0], 2)
     no = 1 - yes
-    return {'YES': yes, 'NO': no} 
+    return {"YES": round(yes, 2), "NO": round(no, 2)}

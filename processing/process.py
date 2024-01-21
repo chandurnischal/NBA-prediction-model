@@ -10,6 +10,7 @@ def updateDB():
     os.system("python processing/load.py")
     os.system("python processing/clean.py")
     os.system("python processing/training.py")
+    os.system("python app/today.py")
     print("Execution Time: {} minutes".format(round((perf_counter() - start) / 60, 1)))
 
 

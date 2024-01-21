@@ -20,17 +20,18 @@
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-light">
-    <a class="navbar-brand" href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="img-fluid mt-5"></a>
+    <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename = '../static/logos/NBA.png') }}"
+        alt="NBA Logo" class="img-fluid mt-5"></a>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
-            </li>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
+        </li>
     </div>
-</nav>
+  </nav>
 
   <header>
     <h1 align="center">Game Details</h1>
@@ -53,183 +54,188 @@
         </tr>
         <tr>
           <th scope="col" style="text-align: center; width: 10%;">
-            <a href="/team/{{ home_id }}"><img src="{{ url_for('static', filename = '../static/logos/' + home_id + '.png') }}"
-              alt="{{ home_id }} Logo not available" class="team-logo"></a>
+            <a href="/team/{{ home_id }}"><img
+                src="{{ url_for('static', filename = '../static/logos/' + home_id + '.png') }}"
+                alt="{{ home_id }} Logo not available" class="team-logo"></a>
           </th>
           <th></th>
           <th scope="col" style="text-align: center; width: 30%;">
-              <a href="/team/{{ visitor_id }}"><img
-              src="{{ url_for('static', filename = '../static/logos/' + visitor_id + '.png') }}"
-              alt="{{ visitor_id }} Logo not available" class="team-logo""> </th>
+            <a href="/team/{{ visitor_id }}"><img
+                src="{{ url_for('static', filename = '../static/logos/' + visitor_id + '.png') }}"
+                alt="{{ visitor_id }} Logo not available" class="team-logo"> </th>
             </tr></a>
           <tr>
             <th>
               {% for color in homeHistory %}
-              <div style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display: inline-block; margin-right: 5px;"></div>
-              {% endfor %}
-      
-            </th>
-            <th>Last 5 games</th>
-            <th>
-              {% for color in visitorHistory %}
-              <div style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display: inline-block; margin-right: 5px;"></div>
-             {% endfor %}
-      
-            </th>
-          </tr>
-          </thead>
-        </table>
+              <div style=" width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display:
+                inline-block; margin-right: 5px;">
+  </div>
+  {% endfor %}
+
+  </th>
+  <th>Last 10 games</th>
+  <th>
+    {% for color in visitorHistory %}
+    <div
+      style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display: inline-block; margin-right: 5px;">
     </div>
-    <h2 align=" center">Arena: {{ arena }}</h2>
-            <div>
-              <table class="table table-hover">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Team</th>
-                    <th>Win</th>
-                    <th>Loss</th>
-                    <th>Total Games</th>
-                    <th>Win Percentage</th>
-                    <th>Games Behind</th>
-                    <th>Points Per Game</th>
-                    <th>Opp. Points Per Game</th>
-                    <th>SRS</th>
-                    <th>Conference</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for index, row in team.iterrows() %}
-                  <tr>
-                    <td>{{ row['index'] + 1 }}</td>
-                    <td>{{ row['Team'] }}</td>
-                    <td>{{ row['W'] }}</td>
-                    <td>{{ row['L'] }}</td>
-                    <td>{{row['T']}}</td>
-                    <td>{{ row['W%'] }}</td>
-                    <td>{{ row['GB'] }}</td>
-                    <td>{{ row['PS/G'] }}</td>
-                    <td>{{ row['PA/G'] }}</td>
-                    <td>{{ row['SRS'] }}</td>
-                    <td>{{ row['conf'] }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
+    {% endfor %}
 
-            <div>
-              <header>
-                <h3 style="text-align: center;">Top Players to Watch</h3>
-              </header>
+  </th>
+  </tr>
+  </thead>
+  </table>
+  </div>
+  <h2 align=" center">Arena: {{ arena }}</h2>
+  <div>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Team</th>
+          <th>Win</th>
+          <th>Loss</th>
+          <th>Total Games</th>
+          <th>Win Percentage</th>
+          <th>Games Behind</th>
+          <th>Points Per Game</th>
+          <th>Opp. Points Per Game</th>
+          <th>SRS</th>
+          <th>Conference</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for index, row in team.iterrows() %}
+        <tr>
+          <td>{{ row['index'] + 1 }}</td>
+          <td>{{ row['Team'] }}</td>
+          <td>{{ row['W'] }}</td>
+          <td>{{ row['L'] }}</td>
+          <td>{{row['T']}}</td>
+          <td>{{ row['W%'] }}</td>
+          <td>{{ row['GB'] }}</td>
+          <td>{{ row['PS/G'] }}</td>
+          <td>{{ row['PA/G'] }}</td>
+          <td>{{ row['SRS'] }}</td>
+          <td>{{ row['conf'] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
-              <table class="table table-hover">
-                <thead>
-                  <th style="text-align: center;">
-                    <h3>{{ home_team }}</h3>
-                  </th>
-                  <th style="text-align: center;">
-                    <h3>{{ visitor_team }}</h3>
-                  </th>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Player</th>
-                            <th>POS</th>
-                            <th>PTS</th>
-                            <th>AST</th>
-                            <th>BLK</th>
-                            <th>TRB</th>
-                            <th>STL</th>
-                            <th>MP</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for index, row in home_players.iterrows() %}
-                          <tr>
-                            <td>{{ index + 1 }}</td>
-                            <td>{{ row['player'] }}</td>
-                            <td>{{ row['pos'] }}</td>
-                            <td>{{ row['pts'] }}</td>
-                            <td>{{row['ast']}}</td>
-                            <td>{{ row['blk'] }}</td>
-                            <td>{{ row['trb'] }}</td>
-                            <td>{{ row['stl'] }}</td>
-                            <td>{{ row['mp'] }}</td>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    </td>
-                    <td>
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Player</th>
-                            <th>POS</th>
-                            <th>PTS</th>
-                            <th>AST</th>
-                            <th>BLK</th>
-                            <th>TRB</th>
-                            <th>STL</th>
-                            <th>MP</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for index, row in visitor_players.iterrows() %}
-                          <tr>
-                            <td>{{ index + 1 }}</td>
-                            <td>{{ row['player'] }}</td>
-                            <td>{{ row['pos'] }}</td>
-                            <td>{{ row['pts'] }}</td>
-                            <td>{{row['ast']}}</td>
-                            <td>{{ row['blk'] }}</td>
-                            <td>{{ row['trb'] }}</td>
-                            <td>{{ row['stl'] }}</td>
-                            <td>{{ row['mp'] }}</td>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    </td>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <header>
-              <p>
-              <h3 align="center">Probability of Victory</h3>
-              </p>
-              <table>
+  <div>
+    <header>
+      <h3 style="text-align: center;">Top Players to Watch</h3>
+    </header>
+
+    <table class="table table-hover">
+      <thead>
+        <th style="text-align: center;">
+          <h3>{{ home_team }}</h3>
+        </th>
+        <th style="text-align: center;">
+          <h3>{{ visitor_team }}</h3>
+        </th>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <table class="table table-striped">
+              <thead>
                 <tr>
-                  <td>{{ home_team }}</td>
-                  <td>{{ visitor_team }}</td>
+                  <th>#</th>
+                  <th>Player</th>
+                  <th>POS</th>
+                  <th>PTS</th>
+                  <th>AST</th>
+                  <th>BLK</th>
+                  <th>TRB</th>
+                  <th>STL</th>
+                  <th>MP</th>
                 </tr>
+              </thead>
+              <tbody>
+                {% for index, row in home_players.iterrows() %}
                 <tr>
-                  <td> {{ winPerc }}% </td>
-                  <td> {{ lossPerc }}% </td>
+                  <td>{{ index + 1 }}</td>
+                  <td><a href="/player/{{ row['player_id'] }}" style="color: #000;">{{ row['player'] }}</a></td>
+                  <td>{{ row['pos'] }}</td>
+                  <td>{{ row['pts'] }}</td>
+                  <td>{{row['ast']}}</td>
+                  <td>{{ row['blk'] }}</td>
+                  <td>{{ row['trb'] }}</td>
+                  <td>{{ row['stl'] }}</td>
+                  <td>{{ row['mp'] }}</td>
                 </tr>
-              </table>
-              <div class="custom-bar-container">
-                <div style="flex: {{ winPerc }}; background-color: {{ color1 }}"></div>
-                <div style="flex: {{ lossPerc }}; background-color: {{ color2 }}; border-left: 0.01rem solid black;">
-                </div>
-              </div>
-            </header>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+          <td>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Player</th>
+                  <th>POS</th>
+                  <th>PTS</th>
+                  <th>AST</th>
+                  <th>BLK</th>
+                  <th>TRB</th>
+                  <th>STL</th>
+                  <th>MP</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for index, row in visitor_players.iterrows() %}
+                <tr>
+                  <td>{{ index + 1 }}</td>
+                  <td><a href="/player/{{ row['player_id'] }}" style="color: #000;">{{ row['player'] }}</a></td>
+                  <td>{{ row['pos'] }}</td>
+                  <td>{{ row['pts'] }}</td>
+                  <td>{{row['ast']}}</td>
+                  <td>{{ row['blk'] }}</td>
+                  <td>{{ row['trb'] }}</td>
+                  <td>{{ row['stl'] }}</td>
+                  <td>{{ row['mp'] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <header>
+    <p>
+    <h3 align="center">Probability of Victory</h3>
+    </p>
+    <table>
+      <tr>
+        <td>{{ home_team }}</td>
+        <td>{{ visitor_team }}</td>
+      </tr>
+      <tr>
+        <td> {{ winPerc }}% </td>
+        <td> {{ lossPerc }}% </td>
+      </tr>
+    </table>
+    <div class="custom-bar-container">
+      <div style="flex: {{ winPerc }}; background-color: {{ color1 }}"></div>
+      <div style="flex: {{ lossPerc }}; background-color: {{ color2 }}; border-left: 0.01rem solid black;">
+      </div>
+    </div>
+  </header>
 
-            <footer>
-              <p>&copy; 2024 NBA Media Ventures, LLC. All rights reserved.</p>
-            </footer>
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <footer>
+    <p>&copy; 2024 NBA Media Ventures, LLC. All rights reserved.</p>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

@@ -11,19 +11,19 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="rounded float-left"></a>
+        <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename = '../static/logos/NBA.png') }}" alt="NBA Logo" class="rounded float-left"></a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
-                </li>
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
+            </li>
         </div>
-        <a class="navbar-brand" href="/conference"><img src="../static/logos/{{ note }}.png" alt="{{ note }}" class="rounded float-right"></a>
-    </nav>
-
+        <a class="navbar-brand" href="/conference"><img src="../static/logos/{{ note }}.png" alt="{{ note }} Conference" class="rounded float-right"></a>
+      </nav>
+    
     <header style="text-align: center;">
         <img src="../static/logos/{{ team.iloc[0]['team_id'] }}.png" alt="{{ team.iloc[0]['team_id'] }}"
             class="img-fluid mt-5">
@@ -118,7 +118,7 @@
                 {% for index, row in player.iterrows() %}
                 <tr>
                     <td>{{ index + 1}}</td>
-                    <td>{{ row['Player'] }}</td>
+                    <td><a href="/player/{{ row['player_id'] }}" style="color: #000;">{{ row['Player'] }}</a></td>
                     <td>{{ row['Age'] }}</td>
                     <td>{{ row['Pos'] }}</td>
                     <td>{{ row['G'] }}</td>

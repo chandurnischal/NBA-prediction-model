@@ -7,3 +7,4 @@ errors.csv
 today.csv
 tracker.xlsx
 app/weights.joblib
+app/today.json

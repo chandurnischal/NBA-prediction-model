@@ -23,18 +23,18 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="/"><img src="../static/logos/NBA.png" alt="NBA Logo" class="img-fluid mt-5"></a>
+        <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename = '../static/logos/NBA.png') }}" alt="NBA Logo" class="img-fluid mt-5"></a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
-                </li>
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
+            </li>
         </div>
-    </nav>
-
+      </nav>
+    
     <header>
         <h1 align="center">Predicted Outcomes</h1>
         <h3 align="center">{{ date }}</h3>
