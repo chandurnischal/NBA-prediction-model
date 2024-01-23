@@ -32,6 +32,27 @@
         <h3>No. {{ leaguePos + 1 }} in the League</h3>
         <h4>Season: {{ team.iloc[0]['Year'] }}</h4>
     </header>
+
+    <div style="align-items: center; justify-content: center;display: flex;">
+        <table class="table table-hover" style="width: fit-content;">
+            <thead>
+                <th>#</th>
+                <th>League Rankings</th>
+                <th>Conference Rankings</th>
+            </thead>
+            <tbody>
+                {% for key in ranks['league'] %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ ranks['league'][key] }}</td>
+                    <td>{{ ranks['conference'][key] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
     <br><br><br>
     <div>
         <h2>Basic Stats</h2>
@@ -111,7 +132,6 @@
                     <th>STL</th>
                     <th>TRB</th>
                     <th>BLK</th>
-                    <th>TOV</th>
                 </tr>
             </thead>
             <tbody>
@@ -128,7 +148,6 @@
                     <td>{{ row['STL'] }}</td>
                     <td>{{ row['TRB'] }}</td>
                     <td>{{ row['BLK'] }}</td>
-                    <td>{{ row['TOV'] }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

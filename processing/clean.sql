@@ -5,6 +5,9 @@ alter table abbrev modify Team text not null;
 alter table abbrev modify Nickname text not null;
 update abbrev set Team = trim(Team), Nickname = trim(Nickname);
 alter table abbrev modify Nickname varchar(3);
+alter table abbrev add column conf varchar(1);
+update abbrev set conf = 'W' where Nickname in ('MIN', 'OKC', 'DEN', 'UTA', 'POR', 'LAC', 'LAL', 'SAC', 'PHO', 'GSW', 'NOP', 'DAL', 'HOU', 'MEM', 'SAS', 'KCK', 'SDC', 'SEA', 'VAN', 'NOH', 'NOK');
+update abbrev set conf = 'E' where conf is null;
 ALTER TABLE abbrev ADD COLUMN ID INT AUTO_INCREMENT PRIMARY KEY;
 alter table abbrev add column franchise varchar(20);
 update abbrev set franchise = SUBSTRING_INDEX(Team, ' ', -1);
@@ -48,16 +51,16 @@ alter table team_total modify `G` INTEGER;
 alter table team_total modify `MP` INTEGER;
 alter table team_total modify `FG` INTEGER;
 alter table team_total modify `FGA` INTEGER;
-alter table team_total modify `FG%` DECIMAL(10, 2);
+alter table team_total modify `FG%` DECIMAL(10, 1);
 alter table team_total modify `3P` INTEGER;
 alter table team_total modify `3PA` INTEGER;
-alter table team_total modify `3P%` DECIMAL(10, 2);
+alter table team_total modify `3P%` DECIMAL(10, 1);
 alter table team_total modify `2P` INTEGER;
 alter table team_total modify `2PA` INTEGER;
-alter table team_total modify `2P%` DECIMAL(10, 2);
+alter table team_total modify `2P%` DECIMAL(10, 1);
 alter table team_total modify `FT` INTEGER;
 alter table team_total modify `FTA` INTEGER;
-alter table team_total modify `FT%` DECIMAL(10, 2);
+alter table team_total modify `FT%` DECIMAL(10, 1);
 alter table team_total modify `ORB` INTEGER;
 alter table team_total modify `DRB` INTEGER;
 alter table team_total modify `TRB` INTEGER;
@@ -69,10 +72,10 @@ alter table team_total modify `PF` INTEGER;
 alter table team_total modify `PTS` INTEGER;
 alter table team_total modify `Year` INTEGER;
 update team_total set `Team` = `Tm` where `Team` is null and `Tm` is not null;
-
 alter table team_total drop column `Tm`;
 
 update team_total set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
+alter table team_total add column `conf` varchar(1);
 alter table team_total add column `nickname` varchar(3) not null;
 update team_total a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
 alter table team_total drop column `Tm`;
@@ -81,6 +84,7 @@ update team_total a join abbrev b on a.Team = b.Team set a.team_id = b.ID;
 alter table team_total add column `franchise_id` integer not null;
 update team_total a join abbrev b on a.Team_id = b.id set a.franchise_id = b.franchiseid;
 CREATE INDEX idx_team_id ON team_total (team_id);
+update team_total a join abbrev b on a.team_id=b.ID set a.conf = b.conf;
 
 
 -- processing team_per_game
@@ -114,28 +118,28 @@ update team_per_game set `Tm` = null where `Tm` = '';
 
 alter table team_per_game modify `Rk` INTEGER;
 alter table team_per_game modify `G` INTEGER;
-alter table team_per_game modify `MP` INTEGER;
-alter table team_per_game modify `FG` INTEGER;
-alter table team_per_game modify `FGA` INTEGER;
-alter table team_per_game modify `FG%` DECIMAL(10, 2);
-alter table team_per_game modify `3P` INTEGER;
-alter table team_per_game modify `3PA` INTEGER;
-alter table team_per_game modify `3P%` DECIMAL(10, 2);
-alter table team_per_game modify `2P` INTEGER;
-alter table team_per_game modify `2PA` INTEGER;
-alter table team_per_game modify `2P%` DECIMAL(10, 2);
-alter table team_per_game modify `FT` INTEGER;
-alter table team_per_game modify `FTA` INTEGER;
-alter table team_per_game modify `FT%` DECIMAL(10, 2);
-alter table team_per_game modify `ORB` INTEGER;
-alter table team_per_game modify `DRB` INTEGER;
-alter table team_per_game modify `TRB` INTEGER;
-alter table team_per_game modify `AST` INTEGER;
-alter table team_per_game modify `STL` INTEGER;
-alter table team_per_game modify `BLK` INTEGER;
-alter table team_per_game modify `TOV` INTEGER;
-alter table team_per_game modify `PF` INTEGER;
-alter table team_per_game modify `PTS` INTEGER;
+alter table team_per_game modify `MP` DECIMAL(10, 1);
+alter table team_per_game modify `FG` DECIMAL(10, 1);
+alter table team_per_game modify `FGA` DECIMAL(10, 1);
+alter table team_per_game modify `FG%` DECIMAL(10, 1);
+alter table team_per_game modify `3P` DECIMAL(10, 1);
+alter table team_per_game modify `3PA` DECIMAL(10, 1);
+alter table team_per_game modify `3P%` DECIMAL(10, 1);
+alter table team_per_game modify `2P` DECIMAL(10, 1);
+alter table team_per_game modify `2PA` DECIMAL(10, 1);
+alter table team_per_game modify `2P%` DECIMAL(10, 1);
+alter table team_per_game modify `FT` DECIMAL(10, 1);
+alter table team_per_game modify `FTA` DECIMAL(10, 1);
+alter table team_per_game modify `FT%` DECIMAL(10, 1);
+alter table team_per_game modify `ORB` DECIMAL(10, 1);
+alter table team_per_game modify `DRB` DECIMAL(10, 1);
+alter table team_per_game modify `TRB` DECIMAL(10, 1);
+alter table team_per_game modify `AST` DECIMAL(10, 1);
+alter table team_per_game modify `STL` DECIMAL(10, 1);
+alter table team_per_game modify `BLK` DECIMAL(10, 1);
+alter table team_per_game modify `TOV` DECIMAL(10, 1);
+alter table team_per_game modify `PF` DECIMAL(10, 1);
+alter table team_per_game modify `PTS` DECIMAL(10, 1);
 alter table team_per_game modify `Year` INTEGER;
 update team_per_game set `Team` = `Tm` where `Team` is null and `Tm` is not null;
 
@@ -143,6 +147,7 @@ alter table team_per_game drop column `Tm`;
 
 
 update team_per_game set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
+alter table team_per_game add column `conf` varchar(1);
 alter table team_per_game add column `nickname` varchar(3) not null;
 update team_per_game a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
 alter table team_per_game drop column `Tm`;
@@ -151,8 +156,8 @@ update team_per_game a join abbrev b on a.Team = b.Team set a.team_id = b.ID;
 alter table team_per_game add column `franchise_id` integer not null;
 update team_per_game a join abbrev b on a.Team_id = b.id set a.franchise_id = b.franchiseid;
 
-
 CREATE INDEX idx_team_id ON team_per_game(team_id);
+update team_per_game a join abbrev b on a.team_id=b.ID set a.conf = b.conf;
 
 
 -- processing team_per_possession
@@ -186,28 +191,28 @@ update team_per_possession set `Tm` = null where `Tm` = '';
 
 alter table team_per_possession modify `Rk` INTEGER;
 alter table team_per_possession modify `G` INTEGER;
-alter table team_per_possession modify `MP` INTEGER;
-alter table team_per_possession modify `FG` INTEGER;
-alter table team_per_possession modify `FGA` INTEGER;
-alter table team_per_possession modify `FG%` DECIMAL(10, 2);
-alter table team_per_possession modify `3P` INTEGER;
-alter table team_per_possession modify `3PA` INTEGER;
-alter table team_per_possession modify `3P%` DECIMAL(10, 2);
-alter table team_per_possession modify `2P` INTEGER;
-alter table team_per_possession modify `2PA` INTEGER;
-alter table team_per_possession modify `2P%` DECIMAL(10, 2);
-alter table team_per_possession modify `FT` INTEGER;
-alter table team_per_possession modify `FTA` INTEGER;
-alter table team_per_possession modify `FT%` DECIMAL(10, 2);
-alter table team_per_possession modify `ORB` INTEGER;
-alter table team_per_possession modify `DRB` INTEGER;
-alter table team_per_possession modify `TRB` INTEGER;
-alter table team_per_possession modify `AST` INTEGER;
-alter table team_per_possession modify `STL` INTEGER;
-alter table team_per_possession modify `BLK` INTEGER;
-alter table team_per_possession modify `TOV` INTEGER;
-alter table team_per_possession modify `PF` INTEGER;
-alter table team_per_possession modify `PTS` INTEGER;
+alter table team_per_possession modify `MP` DECIMAL(10, 1);
+alter table team_per_possession modify `FG` DECIMAL(10, 1);
+alter table team_per_possession modify `FGA` DECIMAL(10, 1);
+alter table team_per_possession modify `FG%` DECIMAL(10, 1);
+alter table team_per_possession modify `3P` DECIMAL(10, 1);
+alter table team_per_possession modify `3PA` DECIMAL(10, 1);
+alter table team_per_possession modify `3P%` DECIMAL(10, 1);
+alter table team_per_possession modify `2P` DECIMAL(10, 1);
+alter table team_per_possession modify `2PA` DECIMAL(10, 1);
+alter table team_per_possession modify `2P%` DECIMAL(10, 1);
+alter table team_per_possession modify `FT` DECIMAL(10, 1);
+alter table team_per_possession modify `FTA` DECIMAL(10, 1);
+alter table team_per_possession modify `FT%` DECIMAL(10, 1);
+alter table team_per_possession modify `ORB` DECIMAL(10, 1);
+alter table team_per_possession modify `DRB` DECIMAL(10, 1);
+alter table team_per_possession modify `TRB` DECIMAL(10, 1);
+alter table team_per_possession modify `AST` DECIMAL(10, 1);
+alter table team_per_possession modify `STL` DECIMAL(10, 1);
+alter table team_per_possession modify `BLK` DECIMAL(10, 1);
+alter table team_per_possession modify `TOV` DECIMAL(10, 1);
+alter table team_per_possession modify `PF` DECIMAL(10, 1);
+alter table team_per_possession modify `PTS` DECIMAL(10, 1);
 alter table team_per_possession modify `Year` INTEGER;
 update team_per_possession set `Team` = `Tm` where `Team` is null and `Tm` is not null;
 
@@ -215,6 +220,7 @@ alter table team_per_possession drop column `Tm`;
 
 
 update team_per_possession set `Team` =  REPLACE(`Team`, '*', '') where `Team` like '%*%';
+alter table team_per_possession add column `conf` varchar(1);
 alter table team_per_possession add column `nickname` varchar(3) not null;
 update team_per_possession a join abbrev b on a.Team = b.Team set a.Nickname = b.Nickname;
 alter table team_per_possession drop column `Tm`;
@@ -224,6 +230,7 @@ alter table team_per_possession add column `franchise_id` integer not null;
 update team_per_possession a join abbrev b on a.Team_id = b.id set a.franchise_id = b.franchiseid;
 
 CREATE INDEX idx_team_id ON team_per_possession(team_id);
+update team_per_possession a join abbrev b on a.team_id=b.ID set a.conf = b.conf;
 
 -- create a new table with unique player names
 
@@ -262,28 +269,28 @@ alter table player_total  MODIFY `Rk` INTEGER;
 alter table player_total  MODIFY `Age` INTEGER; 
 alter table player_total  MODIFY `G` INTEGER;
 alter table player_total  MODIFY `GS` INTEGER; 
-alter table player_total  MODIFY `MP` INTEGER; 
-alter table player_total  MODIFY `FG` INTEGER;
-alter table player_total  MODIFY `FG%` DECIMAL(10, 2);
-alter table player_total  MODIFY `3P` INTEGER;
-alter table player_total  MODIFY `3PA` INTEGER;
-alter table player_total  MODIFY `3P%` DECIMAL(10, 2);
-alter table player_total  MODIFY `2P` INTEGER;
-alter table player_total  MODIFY `2PA` INTEGER;
-alter table player_total  MODIFY `2P%` DECIMAL(10, 2);
-alter table player_total  MODIFY `eFG%` DECIMAL(10, 2);
-alter table player_total  MODIFY `FT` INTEGER;
-alter table player_total  MODIFY `FTA` INTEGER;
-alter table player_total  MODIFY `FT%` DECIMAL(10, 2);
-alter table player_total  MODIFY `ORB` INTEGER;
-alter table player_total  MODIFY `DRB` INTEGER;
-alter table player_total  MODIFY `TRB` INTEGER;
-alter table player_total  MODIFY `AST` INTEGER;
-alter table player_total  MODIFY `STL` INTEGER;
-alter table player_total  MODIFY `BLK` INTEGER;
-alter table player_total  MODIFY `TOV` INTEGER;
-alter table player_total  MODIFY `PF` INTEGER;
-alter table player_total  MODIFY `PTS` INTEGER;
+alter table player_total  MODIFY `MP` DECIMAL(10, 1); 
+alter table player_total  MODIFY `FG` DECIMAL(10, 1);
+alter table player_total  MODIFY `FG%` DECIMAL(10, 1);
+alter table player_total  MODIFY `3P` DECIMAL(10, 1);
+alter table player_total  MODIFY `3PA` DECIMAL(10, 1);
+alter table player_total  MODIFY `3P%` DECIMAL(10, 1);
+alter table player_total  MODIFY `2P` DECIMAL(10, 1);
+alter table player_total  MODIFY `2PA` DECIMAL(10, 1);
+alter table player_total  MODIFY `2P%` DECIMAL(10, 1);
+alter table player_total  MODIFY `eFG%` DECIMAL(10, 1);
+alter table player_total  MODIFY `FT` DECIMAL(10, 1);
+alter table player_total  MODIFY `FTA` DECIMAL(10, 1);
+alter table player_total  MODIFY `FT%` DECIMAL(10, 1);
+alter table player_total  MODIFY `ORB` DECIMAL(10, 1);
+alter table player_total  MODIFY `DRB` DECIMAL(10, 1);
+alter table player_total  MODIFY `TRB` DECIMAL(10, 1);
+alter table player_total  MODIFY `AST` DECIMAL(10, 1);
+alter table player_total  MODIFY `STL` DECIMAL(10, 1);
+alter table player_total  MODIFY `BLK` DECIMAL(10, 1);
+alter table player_total  MODIFY `TOV` DECIMAL(10, 1);
+alter table player_total  MODIFY `PF` DECIMAL(10, 1);
+alter table player_total  MODIFY `PTS` DECIMAL(10, 1);
 alter table player_total  MODIFY `Year` INTEGER;
 
 alter table player_total add player_id INTEGER not null;
@@ -300,6 +307,8 @@ update player_total a join abbrev b on a.Team_id = b.id set a.franchise_id = b.f
 CREATE INDEX idx_player_id ON player_total (player_id);
 CREATE INDEX idx_team_id ON player_total (team_id);
 
+alter table player_total add column `conf` varchar(1);
+update player_total a join abbrev b on a.team_id = b.ID set a.conf = b.conf; 
 
 -- process player_per_game
 
@@ -333,28 +342,28 @@ alter table player_per_game  MODIFY `Rk` INTEGER;
 alter table player_per_game  MODIFY `Age` INTEGER; 
 alter table player_per_game  MODIFY `G` INTEGER;
 alter table player_per_game  MODIFY `GS` INTEGER; 
-alter table player_per_game  MODIFY `MP` INTEGER; 
-alter table player_per_game  MODIFY `FG` INTEGER;
-alter table player_per_game  MODIFY `FG%` DECIMAL(10, 2);
-alter table player_per_game  MODIFY `3P` INTEGER;
-alter table player_per_game  MODIFY `3PA` INTEGER;
-alter table player_per_game  MODIFY `3P%` DECIMAL(10, 2);
-alter table player_per_game  MODIFY `2P` INTEGER;
-alter table player_per_game  MODIFY `2PA` INTEGER;
-alter table player_per_game  MODIFY `2P%` DECIMAL(10, 2);
-alter table player_per_game  MODIFY `eFG%` DECIMAL(10, 2);
-alter table player_per_game  MODIFY `FT` INTEGER;
-alter table player_per_game  MODIFY `FTA` INTEGER;
-alter table player_per_game  MODIFY `FT%` DECIMAL(10, 2);
-alter table player_per_game  MODIFY `ORB` INTEGER;
-alter table player_per_game  MODIFY `DRB` INTEGER;
-alter table player_per_game  MODIFY `TRB` INTEGER;
-alter table player_per_game  MODIFY `AST` INTEGER;
-alter table player_per_game  MODIFY `STL` INTEGER;
-alter table player_per_game  MODIFY `BLK` INTEGER;
-alter table player_per_game  MODIFY `TOV` INTEGER;
-alter table player_per_game  MODIFY `PF` INTEGER;
-alter table player_per_game  MODIFY `PTS` INTEGER;
+alter table player_per_game  MODIFY `MP` DECIMAL(10, 1); 
+alter table player_per_game  MODIFY `FG` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `FG%` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `3P` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `3PA` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `3P%` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `2P` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `2PA` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `2P%` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `eFG%` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `FT` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `FTA` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `FT%` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `ORB` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `DRB` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `TRB` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `AST` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `STL` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `BLK` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `TOV` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `PF` DECIMAL(10, 1);
+alter table player_per_game  MODIFY `PTS` DECIMAL(10, 1);
 alter table player_per_game  MODIFY `Year` INTEGER;
 
 alter table player_per_game add player_id INTEGER not null;
@@ -373,6 +382,8 @@ update player_per_game a join abbrev b on a.Team_id = b.id set a.franchise_id = 
 CREATE INDEX idx_player_id ON player_per_game (player_id);
 CREATE INDEX idx_team_id ON player_per_game (team_id);
 
+alter table player_per_game add column `conf` varchar(1);
+update player_per_game a join abbrev b on a.team_id = b.ID set a.conf = b.conf; 
 
 
 -- process player_per_minute
@@ -407,28 +418,28 @@ alter table player_per_minute  MODIFY `Rk` INTEGER;
 alter table player_per_minute  MODIFY `Age` INTEGER; 
 alter table player_per_minute  MODIFY `G` INTEGER;
 alter table player_per_minute  MODIFY `GS` INTEGER; 
-alter table player_per_minute  MODIFY `MP` INTEGER; 
-alter table player_per_minute  MODIFY `FG` INTEGER;
-alter table player_per_minute  MODIFY `FG%` DECIMAL(10, 2);
-alter table player_per_minute  MODIFY `3P` INTEGER;
-alter table player_per_minute  MODIFY `3PA` INTEGER;
-alter table player_per_minute  MODIFY `3P%` DECIMAL(10, 2);
-alter table player_per_minute  MODIFY `2P` INTEGER;
-alter table player_per_minute  MODIFY `2PA` INTEGER;
-alter table player_per_minute  MODIFY `2P%` DECIMAL(10, 2);
-alter table player_per_minute  MODIFY `eFG%` DECIMAL(10, 2);
-alter table player_per_minute  MODIFY `FT` INTEGER;
-alter table player_per_minute  MODIFY `FTA` INTEGER;
-alter table player_per_minute  MODIFY `FT%` DECIMAL(10, 2);
-alter table player_per_minute  MODIFY `ORB` INTEGER;
-alter table player_per_minute  MODIFY `DRB` INTEGER;
-alter table player_per_minute  MODIFY `TRB` INTEGER;
-alter table player_per_minute  MODIFY `AST` INTEGER;
-alter table player_per_minute  MODIFY `STL` INTEGER;
-alter table player_per_minute  MODIFY `BLK` INTEGER;
-alter table player_per_minute  MODIFY `TOV` INTEGER;
-alter table player_per_minute  MODIFY `PF` INTEGER;
-alter table player_per_minute  MODIFY `PTS` INTEGER;
+alter table player_per_minute  MODIFY `MP` DECIMAL(10, 1); 
+alter table player_per_minute  MODIFY `FG` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `FG%` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `3P` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `3PA` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `3P%` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `2P` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `2PA` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `2P%` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `eFG%` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `FT` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `FTA` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `FT%` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `ORB` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `DRB` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `TRB` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `AST` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `STL` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `BLK` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `TOV` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `PF` DECIMAL(10, 1);
+alter table player_per_minute  MODIFY `PTS` DECIMAL(10, 1);
 alter table player_per_minute  MODIFY `Year` INTEGER;
 
 alter table player_per_minute add player_id INTEGER not null;
@@ -447,6 +458,8 @@ update player_per_minute a join abbrev b on a.Team_id = b.id set a.franchise_id 
 CREATE INDEX idx_player_id ON player_per_minute (player_id);
 CREATE INDEX idx_team_id ON player_per_minute (team_id);
 
+alter table player_per_minute add column `conf` varchar(1);
+update player_per_minute a join abbrev b on a.team_id = b.ID set a.conf = b.conf; 
 
 
 -- process player_per_possession
@@ -481,28 +494,28 @@ alter table player_per_possession  MODIFY `Rk` INTEGER;
 alter table player_per_possession  MODIFY `Age` INTEGER; 
 alter table player_per_possession  MODIFY `G` INTEGER;
 alter table player_per_possession  MODIFY `GS` INTEGER; 
-alter table player_per_possession  MODIFY `MP` INTEGER; 
-alter table player_per_possession  MODIFY `FG` INTEGER;
-alter table player_per_possession  MODIFY `FG%` DECIMAL(10, 2);
-alter table player_per_possession  MODIFY `3P` INTEGER;
-alter table player_per_possession  MODIFY `3PA` INTEGER;
-alter table player_per_possession  MODIFY `3P%` DECIMAL(10, 2);
-alter table player_per_possession  MODIFY `2P` INTEGER;
-alter table player_per_possession  MODIFY `2PA` INTEGER;
-alter table player_per_possession  MODIFY `2P%` DECIMAL(10, 2);
-alter table player_per_possession  MODIFY `eFG%` DECIMAL(10, 2);
-alter table player_per_possession  MODIFY `FT` INTEGER;
-alter table player_per_possession  MODIFY `FTA` INTEGER;
-alter table player_per_possession  MODIFY `FT%` DECIMAL(10, 2);
-alter table player_per_possession  MODIFY `ORB` INTEGER;
-alter table player_per_possession  MODIFY `DRB` INTEGER;
-alter table player_per_possession  MODIFY `TRB` INTEGER;
-alter table player_per_possession  MODIFY `AST` INTEGER;
-alter table player_per_possession  MODIFY `STL` INTEGER;
-alter table player_per_possession  MODIFY `BLK` INTEGER;
-alter table player_per_possession  MODIFY `TOV` INTEGER;
-alter table player_per_possession  MODIFY `PF` INTEGER;
-alter table player_per_possession  MODIFY `PTS` INTEGER;
+alter table player_per_possession  MODIFY `MP` DECIMAL(10, 1); 
+alter table player_per_possession  MODIFY `FG` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `FG%` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `3P` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `3PA` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `3P%` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `2P` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `2PA` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `2P%` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `eFG%` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `FT` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `FTA` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `FT%` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `ORB` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `DRB` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `TRB` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `AST` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `STL` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `BLK` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `TOV` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `PF` DECIMAL(10, 1);
+alter table player_per_possession  MODIFY `PTS` DECIMAL(10, 1);
 alter table player_per_possession  MODIFY `Year` INTEGER;
 
 alter table player_per_possession add player_id INTEGER not null;
@@ -521,6 +534,9 @@ update player_per_possession a join abbrev b on a.Team_id = b.id set a.franchise
 
 CREATE INDEX idx_player_id ON player_per_possession (player_id);
 CREATE INDEX idx_team_id ON player_per_possession (team_id);
+
+alter table player_per_possession add column `conf` varchar(1);
+update player_per_possession a join abbrev b on a.team_id = b.ID set a.conf = b.conf; 
 
 
 -- process player_advanced
@@ -557,26 +573,26 @@ alter table player_advanced  MODIFY `Rk` INTEGER;
 alter table player_advanced  MODIFY `Age` INTEGER;
 alter table player_advanced  MODIFY `G` INTEGER;
 alter table player_advanced  MODIFY `MP` INTEGER;
-alter table player_advanced  MODIFY `PER` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `TS%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `3PAr` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `FTr` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `ORB%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `DRB%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `TRB%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `AST%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `STL%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `BLK%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `TOV%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `USG%` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `OWS` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `DWS` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `WS` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `WS/48` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `OBPM` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `DBPM` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `BPM` DECIMAL(10, 2);
-alter table player_advanced  MODIFY `VORP` DECIMAL(10, 2);
+alter table player_advanced  MODIFY `PER` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `TS%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `3PAr` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `FTr` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `ORB%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `DRB%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `TRB%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `AST%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `STL%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `BLK%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `TOV%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `USG%` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `OWS` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `DWS` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `WS` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `WS/48` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `OBPM` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `DBPM` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `BPM` DECIMAL(10, 1);
+alter table player_advanced  MODIFY `VORP` DECIMAL(10, 1);
 alter table player_advanced  MODIFY `Year` INTEGER;
 
 alter table player_advanced add player_id INTEGER not null;
@@ -594,6 +610,9 @@ update player_advanced a join abbrev b on a.Team_id = b.id set a.franchise_id = 
 
 CREATE INDEX idx_player_id ON player_advanced (player_id);
 CREATE INDEX idx_team_id ON player_advanced (team_id);
+
+alter table player_advanced add column `conf` varchar(1);
+update player_advanced a join abbrev b on a.team_id = b.ID set a.conf = b.conf; 
 
 
 -- processing games table
@@ -667,16 +686,16 @@ update conference_standings set `conf` = null where `conf` = '';
 alter table conference_standings drop column `W/L%`;
 alter table conference_standings modify `W` INTEGER;
 alter table conference_standings modify `L` INTEGER;
-alter table conference_standings modify `GB` DECIMAL(10, 2);
-alter table conference_standings modify `PS/G` DECIMAL(10, 2);
+alter table conference_standings modify `GB` DECIMAL(10, 1);
+alter table conference_standings modify `PS/G` DECIMAL(10, 1);
 alter table conference_standings modify `PA/G` INTEGER;
 alter table conference_standings modify `SRS` INTEGER;
 
 alter table conference_standings add column `T` integer;
 update conference_standings set `T` = `W` + `L`;
 
-alter table conference_standings add column `W%` DECIMAL(10, 2);
-update conference_standings set `W%` = CAST(`W` AS DECIMAL(10, 2)) * 100 / CAST(`T` AS DECIMAL(10, 2));
+alter table conference_standings add column `W%` DECIMAL(10, 1);
+update conference_standings set `W%` = CAST(`W` AS DECIMAL(10, 1)) * 100 / CAST(`T` AS DECIMAL(10, 1));
 
 alter table conference_standings add column team_id int, add column franchise_id int;
 update conference_standings as a join abbrev as b on a.Team = b.Team set a.team_id = b.id;

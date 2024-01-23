@@ -27,364 +27,347 @@
 
     <header>
         <h1>{{ name }}</h1>
+        <h2>Season: {{ teams['latest'].iloc[0] }}</h2>
     </header>
 
     <br><br>
+
     <div style="text-align: center;">
-        <h2>Teams</h2>
-        {% for index, row in teams.iterrows() %}
-        <a href="/team/{{ row['team_id'] }}"><img src="../static/logos/{{ row['team_id'] }}.png"
-                alt="{{ row['team_id'] }} Logo Not Available" class="team-logo"></a>
-        {% if row['start'] == row['end'] %}
-        {{ row['start']}}
-        {% else %}
-        {{ row['start'] }}-{{ row['end'] }}
+        {% if not teams[teams['end'] == teams['latest']].empty %}
+        <p><strong>Current Team</strong></p>
+        {% set id = teams[teams['end'] == teams['latest']]['team_id'].iloc[0] %}
+        {% set start = teams[teams['end'] == teams['latest']]['start'].iloc[0] %}
+        <a href="/team/{{ id }}"><img src="../static/logos/{{ id }}.png" alt="{{ id }} Logo Not Available"
+                class="team-logo"></a>
+        <!-- {{start }} - -->
         {% endif %}
-        {% endfor %}
+    </div>
+    <div style="text-align: center;">
+        {% if not teams[teams['end'] != teams['latest']].empty %}
+        <p><strong>Previous Teams</strong></p>
+        <div>
+        {% for index, row in teams[teams['end'] != teams['latest']].iterrows() %}
+        <a href="/team/{{ row['team_id'] }}"><img src="../static/logos/{{ row['team_id'] }}.png"
+            alt="{{ row['team_id'] }} Logo Not Available" class="team-logo"></a>
+            <!-- {% if row['start'] == row['end'] %}
+            {{ row['start']}}
+            {% else %}
+            {{ row['start'] }}-{{ row['end'] }}
+            {% endif %} -->
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+
+    <div style="align-items: center; justify-content: center; display: flex;">
+        <table class="table table-hover" style="width: fit-content;">
+            <thead>
+                <th>#</th>
+                <th>League Rankings</th>
+                <th>Conference Rankings</th>
+            </thead>
+            <tbody>
+                {% for key in ranks['league'] %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ ranks['league'][key] }}</td>
+                    <td>{{ ranks['conference'][key] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     <br><br><br><br>
-    <h1>Data Dump</h1>
+    <h1>Career Data Dump</h1>
 
-    <table>
-        <tr>
-            <td>
-                <div class="player-stats-table">
-                    <h3 style="text-align: center;">Points Per Game</h3>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">#</th>
-                                <th style="width: 30%;">Year</th>
-                                <th style="width: 30%;">Team</th>
-                                <th style="width: 30%;">PTS</th>
-                            </tr>
-                        </thead>
-                        <td></td>
-                        <td>
-                            <h5>Regular Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {% for index, row in regular.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['PTS'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        <td></td>
-                        <td>
-                            <h5>Playoffs Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {%if not playoffs.empty %}
-                        {% for index, row in playoffs.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['STL'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        {% else %}
+    <div style="align-items: center; justify-content: center; display: flex;">
+        <table style="width: fit-content;">
+            <tr>
+                <td>
+                    <div class="player-stats-table">
+                        <h3 style="text-align: left;">Points Per Game</h3>
+                        <table class="table table-hover" style="width:fit-content">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">#</th>
+                                    <th style="width: 30%;">Year</th>
+                                    <th style="width: 30%;">Team</th>
+                                    <th style="width: 30%;">PTS</th>
+                                </tr>
+                            </thead>
+                            <td></td>
+                            <td>
+                                <h5>Regular Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {% for index, row in regular.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['PTS'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            <td></td>
+                            <td>
+                                <h5>Playoffs Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {%if not playoffs.empty %}
+                            {% for index, row in playoffs.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['STL'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            {% else %}
                             <tr>
                                 <td></td>
                                 <td>Data not available.</td>
                                 <td></td>
                             </tr>
-                        {% endif %}
-                    </table>
-                </div>
-            </td>
-            <td>
-                <div class="player-stats-table">
-                    <h3 style="text-align: center;">Assists Per Game</h3>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">#</th>
-                                <th style="width: 30%;">Year</th>
-                                <th style="width: 30%;">Team</th>
-                                <th style="width: 30%;">AST</th>
-                            </tr>
-                        </thead>
-                        <td></td>
-                        <td>
-                            <h5>Regular Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {% for index, row in regular.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['AST'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        <td></td>
-                        <td>
-                            <h5>Playoffs Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {%if not playoffs.empty %}
-                        {% for index, row in playoffs.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['AST'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        {% else %}
+                            {% endif %}
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="player-stats-table">
+                        <h3 style="text-align: left;">Assists Per Game</h3>
+                        <table class="table table-hover" style="width: fit-content;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">#</th>
+                                    <th style="width: 30%;">Year</th>
+                                    <th style="width: 30%;">Team</th>
+                                    <th style="width: 30%;">AST</th>
+                                </tr>
+                            </thead>
+                            <td></td>
+                            <td>
+                                <h5>Regular Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {% for index, row in regular.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['AST'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            <td></td>
+                            <td>
+                                <h5>Playoffs Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {%if not playoffs.empty %}
+                            {% for index, row in playoffs.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['AST'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            {% else %}
                             <tr>
                                 <td></td>
                                 <td>Playoffs data not available.</td>
                                 <td></td>
                             </tr>
-                        {% endif %}
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class="player-stats-table">
-                    <h3 style="text-align: center;">Blocks Per Game</h3>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">#</th>
-                                <th style="width: 30%;">Year</th>
-                                <th style="width: 30%;">Team</th>
-                                <th style="width: 30%;">BLK</th>
-                            </tr>
-                        </thead>
-                        <td></td>
-                        <td>
-                            <h5>Regular Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {% for index, row in regular.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['BLK'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        <td></td>
-                        <td>
-                            <h5>Playoffs Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {%if not playoffs.empty %}
-                        {% for index, row in playoffs.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['BLK'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td></td>
-                                <td>Data not available.</td>
-                                <td></td>
-                            </tr>
-                        {% endif %}
-                    </table>
-                </div>
-            </td>
-            <td>
-                <div class="player-stats-table">
-                    <h3 style="text-align: center;">Rebounds Per Game</h3>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">#</th>
-                                <th style="width: 30%;">Year</th>
-                                <th style="width: 30%;">Team</th>
-                                <th style="width: 30%;">TRB</th>
-                            </tr>
-                        </thead>
-                        <td></td>
-                        <td>
-                            <h5>Regular Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {% for index, row in regular.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['TRB'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        <td></td>
-                        <td>
-                            <h5>Playoffs Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {%if not playoffs.empty %}
-                        {% for index, row in playoffs.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['TRB'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        {% else %}
+                            {% endif %}
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="player-stats-table">
+                        <h3 style="text-align: left;">Blocks Per Game</h3>
+                        <table class="table table-hover" style="width: fit-content;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">#</th>
+                                    <th style="width: 30%;">Year</th>
+                                    <th style="width: 30%;">Team</th>
+                                    <th style="width: 30%;">BLK</th>
+                                </tr>
+                            </thead>
+                            <td></td>
+                            <td>
+                                <h5>Regular Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {% for index, row in regular.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['BLK'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            <td></td>
+                            <td>
+                                <h5>Playoffs Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {%if not playoffs.empty %}
+                            {% for index, row in playoffs.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['BLK'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            {% else %}
                             <tr>
                                 <td></td>
                                 <td>Data not available.</td>
                                 <td></td>
                             </tr>
-                        {% endif %}
-                    </table>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <div class="player-stats-table">
-                    <h3 style="text-align: center;">Steals Per Game</h3>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">#</th>
-                                <th style="width: 30%;">Year</th>
-                                <th style="width: 30%;">Team</th>
-                                <th style="width: 30%;">STL</th>
-                            </tr>
-                        </thead>
-                        <td></td>
-                        <td>
-                            <h5>Regular Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {% for index, row in regular.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['STL'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        <td></td>
-                        <td>
-                            <h5>Playoffs Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {%if not playoffs.empty %}
-                        {% for index, row in playoffs.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['STL'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        {% else %}
+                            {% endif %}
+                        </table>
+                    </div>
+                </td>
+                <td>
+                    <div class="player-stats-table">
+                        <h3 style="text-align: left;">Rebounds Per Game</h3>
+                        <table class="table table-hover" style="width: fit-content;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">#</th>
+                                    <th style="width: 30%;">Year</th>
+                                    <th style="width: 30%;">Team</th>
+                                    <th style="width: 30%;">TRB</th>
+                                </tr>
+                            </thead>
+                            <td></td>
+                            <td>
+                                <h5>Regular Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {% for index, row in regular.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['TRB'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            <td></td>
+                            <td>
+                                <h5>Playoffs Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {%if not playoffs.empty %}
+                            {% for index, row in playoffs.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['TRB'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            {% else %}
                             <tr>
                                 <td></td>
                                 <td>Data not available.</td>
                                 <td></td>
                             </tr>
-                        {% endif %}
-                    </table>
-                </div>
-            </td>
-            <td>
-                <div class="player-stats-table">
-                    <h3 style="text-align: center;">Turnovers Per Game</h3>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">#</th>
-                                <th style="width: 30%;">Year</th>
-                                <th style="width: 30%;">Team</th>
-                                <th style="width: 30%;">TOV</th>
-                            </tr>
-                        </thead>
-                        <td></td>
-                        <td>
-                            <h5>Regular Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {% for index, row in regular.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['TOV'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        <td></td>
-                        <td>
-                            <h5>Playoffs Season</h5>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        {%if not playoffs.empty %}
-                        {% for index, row in playoffs.iterrows() %}
-                        <tbody>
-                            <tr>
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ row['Year'] }}</td>
-                                <td>{{ row['Tm'] }}</td>
-                                <td>{{ row['TOV'] }}</td>
-                            </tr>
-                        </tbody>
-                        {% endfor %}
-                        {% else %}
+                            {% endif %}
+                        </table>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="player-stats-table">
+                        <h3 style="text-align: left;">Steals Per Game</h3>
+                        <table class="table table-hover" style="width: fit-content;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">#</th>
+                                    <th style="width: 30%;">Year</th>
+                                    <th style="width: 30%;">Team</th>
+                                    <th style="width: 30%;">STL</th>
+                                </tr>
+                            </thead>
+                            <td></td>
+                            <td>
+                                <h5>Regular Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {% for index, row in regular.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['STL'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            <td></td>
+                            <td>
+                                <h5>Playoffs Season</h5>
+                            </td>
+                            <td></td>
+                            <td></td>
+                            {%if not playoffs.empty %}
+                            {% for index, row in playoffs.iterrows() %}
+                            <tbody>
+                                <tr>
+                                    <td>{{ index + 1 }}</td>
+                                    <td>{{ row['Year'] }}</td>
+                                    <td>{{ row['Tm'] }}</td>
+                                    <td>{{ row['STL'] }}</td>
+                                </tr>
+                            </tbody>
+                            {% endfor %}
+                            {% else %}
                             <tr>
                                 <td></td>
                                 <td>Data not available.</td>
                                 <td></td>
                             </tr>
-                        {% endif %}
-                    </table>
-                </div>
-            </td>
-        </tr>
-
-    </table>
+                            {% endif %}
+                        </table>
+                    </div>
+                </td>
+            </tr>
+    
+        </table>
+    </div>
 
     <footer>
         <p>&copy; 2024 NBA Media Ventures, LLC. All rights reserved.</p>

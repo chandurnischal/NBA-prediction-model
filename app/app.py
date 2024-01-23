@@ -3,11 +3,10 @@ from datetime import datetime
 from flask import Flask, render_template
 import prediction as p
 import time
-from tqdm import tqdm
 import warnings
 import utils as u
-import matplotlib.pyplot as plt
-
+from tqdm import tqdm
+from os import system
 warnings.filterwarnings("ignore")
 
 today = datetime.now()
@@ -68,6 +67,8 @@ def game(home_id, visitor_id):
     )
 
     players = u.sqlTodf(playerQuery, creds)
+
+    players[['pts', 'ast', 'blk', 'trb', 'stl', 'mp']] = players[['pts', 'ast', 'blk', 'trb', 'stl', 'mp']].astype(int)
 
     homePlayers = (
         players[players["team_id"] == int(home_id)].reset_index(drop=True).head(5)
@@ -136,9 +137,18 @@ def summary():
     yes, no = [], []
     hcolor, vcolor = [], []
 
+    try:
+        with open('app/today.json') as file:
+            outcomes = json.load(file)
+    except:
+        outcomes = {}
+
+    if len(outcomes) != len(data.index):
+        system("python app/today.py")
+
     with open('app/today.json') as file:
         outcomes = json.load(file)
-    
+
     for _, value in outcomes.items():
         home_id, visitor_id = int(value['home']['id']), int(value['visitor']['id'])
         outcome = {'YES': value['home']['prob'], 'NO': value['visitor']['prob']}
@@ -213,6 +223,8 @@ def team(team_id):
     confPos = conf[conf["team_id"] == int(team_id)].index[0]
     teamRow = league[league["team_id"] == int(team_id)]
 
+    ranks = u.getTeamRank(int(team_id), creds)
+
     return render_template(
         "team.html",
         team=team,
@@ -221,6 +233,7 @@ def team(team_id):
         leaguePos=leaguePos,
         confPos=confPos,
         teamRow=teamRow,
+        ranks = ranks
     )
 
 
@@ -252,12 +265,13 @@ def player(player_id):
 
     data = data.sort_values(by=['Year'], ascending=False)
 
+    ranks = u.getPlayerRank(int(player_id), creds)
+
     regular, playoffs = data[data["is_regular"] == 1].reset_index(drop=True), data[
         data["is_regular"] == 0
     ].reset_index(drop=True)
     name = data["Player"].iloc[0]
-    return render_template("player.html", name=name, teams=teams, regular=regular, playoffs=playoffs)
-
+    return render_template("player.html", name=name, teams=teams, regular=regular, playoffs=playoffs, ranks=ranks)
 
 if __name__ == "__main__":
     app.run(debug=True)
