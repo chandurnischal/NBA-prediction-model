@@ -111,6 +111,7 @@ def getPlayerRank(player_id: int, creds: dict) -> dict:
 
     data = sqlTodf(query, creds)
     data["Tm"] = data.groupby("Player")["Tm"].transform("last")
+    data['conf'] = data.groupby("Player")["conf"].transform("last")
     data = data.drop_duplicates(["Player"])
 
     return getRank(data, player_id, "player")

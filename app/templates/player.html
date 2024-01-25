@@ -121,21 +121,35 @@
             </thead>
 
             <tbody>
-                {% for _, row in basic.iterrows() %}
-                <td>{{ row['PTS'] }}</td>
-                <td>{{ row['AST'] }}</td>
-                <td>{{ row['BLK'] }}</td>
-                <td>{{ row['ORB'] }}</td>
-                <td>{{ row['DRB'] }}</td>
-                <td>{{ row['TRB'] }}</td>
-                <td>{{ row['STL'] }}</td>
-                <td>{{ row['PF'] }}</td>
-                <td>{{ (row['FG'] * 100 / row['FGA'])|round(2) }}</td>
-                <td>{{ (row['2P'] * 100 / row['2PA'])|round(2) }}</td>
-                <td>{{ (row['3P'] * 100 / row['3PA'])|round(2) }}</td>
-                <td>{{ (row['FT'] * 100 / row['FTA'])|round(2) }}</td>
-                <td>{{ row['eFG%'] * 100 }}</td>
-                {% endfor %}
+                <td>{{ basic['PTS'].iloc[0] }}</td>
+                <td>{{ basic['AST'].iloc[0] }}</td>
+                <td>{{ basic['BLK'].iloc[0] }}</td>
+                <td>{{ basic['ORB'].iloc[0] }}</td>
+                <td>{{ basic['DRB'].iloc[0] }}</td>
+                <td>{{ basic['TRB'].iloc[0] }}</td>
+                <td>{{ basic['STL'].iloc[0] }}</td>
+                <td>{{ basic['PF'].iloc[0] }}</td>
+                {% if basic['FGA'].iloc[0] != 0 %}
+                <td>{{ (basic['FG'].iloc[0] * 100 / basic['FGA'].iloc[0])|round(2) }}</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+                {% if basic['2PA'].iloc[0] != 0 %}
+                <td>{{ (basic['2P'].iloc[0] * 100 / basic['2PA'].iloc[0])|round(2) }}</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+                {% if basic['3PA'].iloc[0] != 0 %}
+                <td>{{ (basic['3P'].iloc[0] * 100 / basic['3PA'].iloc[0])|round(2) }}</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+                {% if basic['FTA'].iloc[0] != 0 %}
+                <td>{{ (basic['FT'].iloc[0] * 100 / basic['FTA'].iloc[0])|round(2) }}</td>
+                {% else %}
+                <td>-</td>
+                {% endif %}
+                <td>{{ basic['eFG%'].iloc[0] * 100 }}</td>
             </tbody>
         </table>
     </div>
