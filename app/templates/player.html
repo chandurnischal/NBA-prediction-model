@@ -23,12 +23,34 @@
                     <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
                 </li>
         </div>
+        <a class="navbar-brand" href="/conference"><img src="../static/logos/{{ conf }}.png" alt="{{ conf }} Conference" class="rounded float-right"></a>
     </nav>
 
     <header>
         <h1>{{ name }}</h1>
         <h2>Season: {{ teams['latest'].iloc[0] }}</h2>
     </header>
+
+    <div style="align-items: center; justify-content: center; display: flex;">
+        <table class="table table-borderless" style="width: fit-content;">
+            <thead>
+                <th>POS</th>
+                <th>Age</th>
+                <th>G</th>
+                <th>GS</th>
+                <th>MP/G</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ basic['Pos'].iloc[0] }}</td>
+                    <td>{{ basic['Age'].iloc[0] }}</td>
+                    <td>{{ basic['G'].iloc[0] }}</td>
+                    <td>{{ basic['GS'].iloc[0] }}</td>
+                    <td>{{ basic['MP'].iloc[0] }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <br><br>
 
@@ -70,11 +92,68 @@
             <tbody>
                 {% for key in ranks['league'] %}
                 <tr>
-                    <td>{{ key }}</td>
+                    <td><strong>{{ key }}</strong></td>
                     <td>{{ ranks['league'][key] }}</td>
                     <td>{{ ranks['conference'][key] }}</td>
                 </tr>
                 {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h2>Basic Stats</h2>
+        <table class="table table-hover">
+            <thead>
+                <th>PTS</th>
+                <th>AST</th>
+                <th>BLK</th>
+                <th>ORB</th>
+                <th>DRB</th>
+                <th>TRB</th>
+                <th>STL</th>
+                <th>PF</th>
+                <th>FG%</th>
+                <th>2P%</th>
+                <th>3P%</th>
+                <th>FT%</th>
+                <th>eFG%</th>
+            </thead>
+
+            <tbody>
+                {% for _, row in basic.iterrows() %}
+                <td>{{ row['PTS'] }}</td>
+                <td>{{ row['AST'] }}</td>
+                <td>{{ row['BLK'] }}</td>
+                <td>{{ row['ORB'] }}</td>
+                <td>{{ row['DRB'] }}</td>
+                <td>{{ row['TRB'] }}</td>
+                <td>{{ row['STL'] }}</td>
+                <td>{{ row['PF'] }}</td>
+                <td>{{ (row['FG'] * 100 / row['FGA'])|round(2) }}</td>
+                <td>{{ (row['2P'] * 100 / row['2PA'])|round(2) }}</td>
+                <td>{{ (row['3P'] * 100 / row['3PA'])|round(2) }}</td>
+                <td>{{ (row['FT'] * 100 / row['FTA'])|round(2) }}</td>
+                <td>{{ row['eFG%'] * 100 }}</td>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h2>Advanced Stats</h2>
+        <table class="table table-hover">
+            <thead>
+                {% for col in advanced.columns.to_list()[7:27] %}
+                <th>{{ col }}</th>
+                {% endfor %}
+            </thead>
+            <tbody>
+                <tr>
+                    {% for col in advanced.columns.to_list()[7:27] %}
+                    <td>{{ advanced[col].iloc[0] }}</td>
+                    {% endfor %}
+                </tr>
             </tbody>
         </table>
     </div>

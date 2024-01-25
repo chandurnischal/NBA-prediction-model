@@ -5,6 +5,7 @@ import joblib
 import utils as u
 import json
 
+
 def trainModel(creds, features):
     query = """
     select * from elo

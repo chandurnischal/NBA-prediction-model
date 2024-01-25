@@ -5,8 +5,8 @@ import prediction as p
 import time
 import warnings
 import utils as u
-from tqdm import tqdm
 from os import system
+import pandas as pd
 warnings.filterwarnings("ignore")
 
 today = datetime.now()
@@ -68,7 +68,9 @@ def game(home_id, visitor_id):
 
     players = u.sqlTodf(playerQuery, creds)
 
-    players[['pts', 'ast', 'blk', 'trb', 'stl', 'mp']] = players[['pts', 'ast', 'blk', 'trb', 'stl', 'mp']].astype(int)
+    players[["pts", "ast", "blk", "trb", "stl", "mp"]] = players[
+        ["pts", "ast", "blk", "trb", "stl", "mp"]
+    ].astype(int)
 
     homePlayers = (
         players[players["team_id"] == int(home_id)].reset_index(drop=True).head(5)
@@ -100,7 +102,28 @@ def game(home_id, visitor_id):
     color1 = "rgb({}, {}, {})".format(c1[0], c1[1], c1[2])
     color2 = "rgb({}, {}, {})".format(c2[0], c2[1], c2[2])
 
-    probs = p.classify(home_id, visitor_id)
+    with open('app/today.json') as file:
+        today = json.load(file)
+
+
+    dataList = []
+    for index, values in today.items():
+        home = values['home']
+        visitor = values['visitor']
+        dataList.append([index, home['id'], home['prob'], visitor['id'], visitor['prob']])
+
+    columns = ['index', 'home_id', 'home_prob', 'visitor_id', 'visitor_prob']
+    outcomes = pd.DataFrame(dataList, columns=columns)
+    outcomes = outcomes.apply(pd.to_numeric, errors="ignore")
+
+    condition = (outcomes['home_id'] == int(home_id)) & (outcomes['visitor_id'] == int(visitor_id))
+    filtered = outcomes[condition]
+
+    if not filtered.empty:
+        probs = {'YES': filtered['home_prob'].iloc[0], 'NO': filtered['visitor_prob'].iloc[0]}
+    else:
+        probs = p.classify(home_id, visitor_id)
+
     winPerc = probs["YES"] * 100
     lossPerc = 100 - winPerc
     homeHistory = u.getTeamHistory(int(home_id), creds)[::-1]
@@ -131,14 +154,15 @@ def game(home_id, visitor_id):
         visitorHistory=visitorHistory,
     )
 
-@app.route('/summary')
+
+@app.route("/summary")
 def summary():
     start = time.perf_counter()
     yes, no = [], []
     hcolor, vcolor = [], []
 
     try:
-        with open('app/today.json') as file:
+        with open("app/today.json") as file:
             outcomes = json.load(file)
     except:
         outcomes = {}
@@ -146,12 +170,12 @@ def summary():
     if len(outcomes) != len(data.index):
         system("python app/today.py")
 
-    with open('app/today.json') as file:
+    with open("app/today.json") as file:
         outcomes = json.load(file)
 
     for _, value in outcomes.items():
-        home_id, visitor_id = int(value['home']['id']), int(value['visitor']['id'])
-        outcome = {'YES': value['home']['prob'], 'NO': value['visitor']['prob']}
+        home_id, visitor_id = int(value["home"]["id"]), int(value["visitor"]["id"])
+        outcome = {"YES": value["home"]["prob"], "NO": value["visitor"]["prob"]}
         c1, c2 = u.themeExtractor(home_id), u.themeExtractor(visitor_id)
 
         if (c1[0] - c2[0]) + (c1[1] - c2[1]) + (c1[2] - c2[2]) <= 50:
@@ -177,9 +201,9 @@ def summary():
     data["NO"] = no
     end = time.perf_counter()
     latency = round(end - start, 2)
-    app.logger.info('Latency: {}'.format(latency))
+    app.logger.info("Latency: {}s".format(latency))
 
-    return render_template("summary.html", date=formattedDate, data=data) 
+    return render_template("summary.html", date=formattedDate, data=data)
 
 
 @app.route("/team/<team_id>")
@@ -233,7 +257,7 @@ def team(team_id):
         leaguePos=leaguePos,
         confPos=confPos,
         teamRow=teamRow,
-        ranks = ranks
+        ranks=ranks,
     )
 
 
@@ -263,7 +287,7 @@ def players():
 def player(player_id):
     data, teams = u.getPlayerHistory(int(player_id), creds)
 
-    data = data.sort_values(by=['Year'], ascending=False)
+    data = data.sort_values(by=["Year"], ascending=False)
 
     ranks = u.getPlayerRank(int(player_id), creds)
 
@@ -271,7 +295,39 @@ def player(player_id):
         data["is_regular"] == 0
     ].reset_index(drop=True)
     name = data["Player"].iloc[0]
-    return render_template("player.html", name=name, teams=teams, regular=regular, playoffs=playoffs, ranks=ranks)
+
+    basicQuery = '''
+    select * from player_per_game where player_id = {} and year = (select max(year) from player_per_game)
+    '''.format(player_id)
+
+    advancedQuery = '''
+    select * from player_advanced where player_id = {} and year = (select max(year) from player_advanced)
+    '''.format(player_id)
+
+    basic = u.sqlTodf(basicQuery, creds)
+    advanced = u.sqlTodf(advancedQuery, creds)
+
+    basic = basic.apply(pd.to_numeric, errors='ignore')
+
+    conf = basic['conf'].iloc[0]
+
+    if conf == 'W':
+        conf = 'Western'
+    else:
+        conf = 'Eastern'
+
+    return render_template(
+        "player.html",
+        name=name,
+        teams=teams,
+        regular=regular,
+        playoffs=playoffs,
+        ranks=ranks,
+        basic = basic,
+        advanced = advanced,
+        conf=conf
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
