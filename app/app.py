@@ -61,7 +61,7 @@ def game(home_id, visitor_id):
     )
 
     playerQuery = """
-    select player_id, player, team_id, tm, pos, pts, ast, blk, trb, stl, mp from player_per_game where team_id in ({}, {}) and is_regular=1 and year = (select max(year) from player_per_game) order by per desc
+    select player_id, player, team_id, tm, pos, pts, ast, blk, trb, stl, mp from player_per_game where team_id in ({}, {}) and is_regular=1 and year = (select max(year) from player_per_game) order by pts desc
     """.format(
         home_id, visitor_id
     )
@@ -236,6 +236,14 @@ def team(team_id):
 
     conf = league[league["conf"] == region].reset_index(drop=True)
 
+    history = u.getTeamHistory(int(team_id), creds)[::-1]
+
+    nextMatchupsQ = '''
+    select date, day, home_id, Home, visitor_id, Visitor from games where (home_id = {} or visitor_id = {}) and Hpoints = '' limit 7
+    '''.format(team_id, team_id)
+
+    nextMatchups = u.sqlTodf(nextMatchupsQ, creds)
+
     if region == "W":
         note = "Western"
     else:
@@ -258,11 +266,13 @@ def team(team_id):
         confPos=confPos,
         teamRow=teamRow,
         ranks=ranks,
+        history=history,
+        nextMatchups=nextMatchups
     )
 
 
-@app.route("/conference")
-def conference():
+@app.route("/standings")
+def standings():
     conferenceQuery = """
     select * from conference_standings where year=(select max(year) from conference_standings)
     """
@@ -275,7 +285,7 @@ def conference():
     east = east.sort_values(by="W%", ascending=False).reset_index(drop=True)
     west = west.sort_values(by="W%", ascending=False).reset_index(drop=True)
 
-    return render_template("conference.html", east=east, west=west, year=year)
+    return render_template("standings.html", east=east, west=west, year=year)
 
 
 @app.route("/players")
@@ -328,6 +338,24 @@ def player(player_id):
         conf=conf
     )
 
+@app.route('/conference/<conf>')
+def conference(conf:str):
+
+    query = '''
+    select * from conference_standings where conf = '{}' and year = (select max(year) from conference_standings)
+    '''.format(conf)
+
+    conference = u.sqlTodf(query, creds)
+
+    note = conference['conf'].iloc[0]
+
+
+    if note == 'W':
+        note = 'Western'
+    else:
+        note = 'Eastern'
+
+    return render_template('conference.html', conference=conference, note=note)
 
 if __name__ == "__main__":
     app.run(debug=True)

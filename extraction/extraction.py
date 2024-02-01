@@ -228,8 +228,8 @@ class Teams:
         for r in remove:
             r.decompose()
 
-        eTable = soup.find("table", id="divs_standings_E")
-        wTable = soup.find("table", id="divs_standings_W")
+        eTable = soup.find("table", id="confs_standings_E")
+        wTable = soup.find("table", id="confs_standings_W")
         eConf = self.__conferenceTableRemover(eTable)
         wConf = self.__conferenceTableRemover(wTable)
         eConf["conf"] = "E"

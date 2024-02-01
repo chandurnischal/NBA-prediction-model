@@ -25,7 +25,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="/standings">Standings<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
@@ -62,29 +62,30 @@
           <th scope="col" style="text-align: center; width: 30%;">
             <a href="/team/{{ visitor_id }}"><img
                 src="{{ url_for('static', filename = '../static/logos/' + visitor_id + '.png') }}"
-                alt="{{ visitor_id }} Logo not available" class="team-logo"> </th>
-            </tr></a>
-          <tr>
-            <th>
-              {% for color in homeHistory %}
-              <div style=" width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display:
+                alt="{{ visitor_id }} Logo not available" class="team-logo">
+          </th>
+        </tr></a>
+        <tr>
+          <th>
+            {% for color in homeHistory %}
+            <div style=" width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display:
                 inline-block; margin-right: 5px;">
-  </div>
-  {% endfor %}
+            </div>
+            {% endfor %}
 
-  </th>
-  <th>Last 10 games</th>
-  <th>
-    {% for color in visitorHistory %}
-    <div
-      style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display: inline-block; margin-right: 5px;">
-    </div>
-    {% endfor %}
+          </th>
+          <th>Last 10 games</th>
+          <th>
+            {% for color in visitorHistory %}
+            <div
+              style="width: 20px; height: 20px; border-radius: 50%; background-color: {{ color }}; display: inline-block; margin-right: 5px;">
+            </div>
+            {% endfor %}
 
-  </th>
-  </tr>
-  </thead>
-  </table>
+          </th>
+        </tr>
+      </thead>
+    </table>
   </div>
   <h2 align=" center">Arena: {{ arena }}</h2>
   <div>

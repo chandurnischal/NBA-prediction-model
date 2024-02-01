@@ -6,98 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="../static/css/game.css">
-
-    <title>Conference Standings {{ year }}</title>
+    <title>NBA Games Today</title>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
-        <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename = '../static/logos/NBA.png') }}" alt="NBA Logo" class="img-fluid mt-5"></a>
+        <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename = '../static/logos/NBA.png') }}"
+                alt="NBA Logo" class="img-fluid mt-5"></a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="/conference">Standings<span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item active">
-              <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
-            </li>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/standings">Standings<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
+                </li>
         </div>
-      </nav>
-    <div>
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        <h3>Western Conference</h3>
-                    </th>
-                    <th>
-                        <h3>Eastern Conference</h3>
-                    </th>
-                </tr>
-                <tr>
-                    <th>
-                        <img src="../static/logos/Western.png" />
-                    </th>
-                    <th>
-                        <img src="../static/logos/Eastern.png" />
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <table class="table table-hover conference-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 20%;">#</th>
-                                    <th style="width: 20%;">Team</th>
-                                    <th style="width: 20%;">Win-Loss</th>
-                                    <th style="width: 20%;">Win%</th>
-                                    <th style="width: 20%;">GB</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for index, row in west.iterrows() %}
-                                <tr>
-                                    <td style="width: 20%;">{{ index + 1 }}</td>
-                                    <td style="width: 20%;"><a href="/team/{{ row['team_id'] }}"><img src="../static/logos/{{ row['team_id'] }}.png" width="70%"></a></td>
-                                    <td style="width: 20%;">{{ row['W'] }}-{{ row['L'] }}</td>
-                                    <td style="width: 20%;">{{ row['W%'] }}</td>
-                                    <td style="width: 20%;">{{ row['GB'] }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </td>
-                    <td>
-                        <table class="table table-hover conference-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 20%;">#</th>
-                                    <th style="width: 20%;">Team</th>
-                                    <th style="width: 20%;">Win-Loss</th>
-                                    <th style="width: 20%;">Win%</th>
-                                    <th style="width: 20%;">GB</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for index, row in east.iterrows() %}
-                                <tr>
-                                    <td style="width: 20%;">{{ index + 1 }}</td>
-                                    <td><a href="/team/{{ row['team_id'] }}"><img src="../static/logos/{{ row['team_id'] }}.png" width="70%"></a></td>
-                                    <td style="width: 20%;">{{ row['W'] }}-{{ row['L'] }}</td>
-                                    <td style="width: 20%;">{{ row['W%'] }}</td>
-                                    <td style="width: 20%;">{{ row['GB'] }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+    </nav>
+    <header style="text-align: center;">
+        <h1>{{ note }} Conference</h1>
+        <a href="/conference/{{ note[0] }}"><img src="../static/logos/{{ note }}.png" alt="{{ note }} Conference Logo" class="img-fluid mt-5" style="text-align: center;"></a>
+    </header>
 
-                    </td>
-                </tr>
-            </tbody>
+    <div>
+        <table class="table table-hover">
+        <thead>
+            <th>Team</th>
+            <th>W-L</th>
+            <th>W%</th>
+            <th>GB</th>
+            <th>PS/G</th>
+            <th>PA/G</th>
+            <th>SRS</th>
+        </thead>
+        <tbody>
+            {% for index, row in conference.iterrows() %}
+            <tr>
+                <td><a href="/team/{{ row['team_id'] }}"><img src="../static/logos/{{ row['team_id'] }}.png" alt="{{ row['team_id'] }} Logo not available" class="img-fluid mt-5"></a></td>
+                <td>{{ row['W'] }}-{{ row['L'] }}</td>
+                <td>{{ row['W%'] }}</td>
+                <td>{{ row['GB'] }}</td>
+                <td>{{ row['PS/G'] }}</td>
+                <td>{{ row['PA/G'] }}</td>
+                <th>{{ row['SRS'] }}</th>
+            </tr>
+            {% endfor %}
+        </tbody>
         </table>
     </div>
+
+
     <footer>
         <p>&copy; 2024 NBA Media Ventures, LLC. All rights reserved.</p>
     </footer>

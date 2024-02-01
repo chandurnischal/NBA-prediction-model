@@ -1,8 +1,15 @@
 import os
-
+from datetime import datetime, time
 
 def main():
-    os.system("python processing/process.py")
+    now = datetime.now().time()
+    check = time(9, 0)
+
+    if now >= check:
+        os.system("python processing/process.py")
+    else:
+        print("Database up to date.")
+        
     os.system("python app/app.py")
 
 
