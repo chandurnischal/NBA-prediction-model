@@ -15,8 +15,16 @@
                 alt="NBA Logo" class="img-fluid mt-5"></a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/standings">Standings<span class="sr-only">(current)</span></a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Standings
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/standings">League</a>
+                        <a class="dropdown-item" href="/conference/W">Western Conference</a>
+                        <a class="dropdown-item" href="/conference/E">Eastern Conference</a>
+                    </div>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="/players">Players<span class="sr-only">(current)</span></a>
@@ -25,33 +33,42 @@
     </nav>
     <header style="text-align: center;">
         <h1>{{ note }} Conference</h1>
-        <a href="/conference/{{ note[0] }}"><img src="../static/logos/{{ note }}.png" alt="{{ note }} Conference Logo" class="img-fluid mt-5" style="text-align: center;"></a>
+        <a href="/conference/{{ note[0] }}"><img src="../static/logos/{{ note }}.png" alt="{{ note }} Conference Logo"
+                class="img-fluid mt-5" style="text-align: center;"></a>
+        <h1>Season: {{ conference.iloc[0]['Year'] }}</h1>
     </header>
 
-    <div>
+    <div class="conference-table">
         <table class="table table-hover">
-        <thead>
-            <th>Team</th>
-            <th>W-L</th>
-            <th>W%</th>
-            <th>GB</th>
-            <th>PS/G</th>
-            <th>PA/G</th>
-            <th>SRS</th>
-        </thead>
-        <tbody>
-            {% for index, row in conference.iterrows() %}
-            <tr>
-                <td><a href="/team/{{ row['team_id'] }}"><img src="../static/logos/{{ row['team_id'] }}.png" alt="{{ row['team_id'] }} Logo not available" class="img-fluid mt-5"></a></td>
-                <td>{{ row['W'] }}-{{ row['L'] }}</td>
-                <td>{{ row['W%'] }}</td>
-                <td>{{ row['GB'] }}</td>
-                <td>{{ row['PS/G'] }}</td>
-                <td>{{ row['PA/G'] }}</td>
-                <th>{{ row['SRS'] }}</th>
-            </tr>
-            {% endfor %}
-        </tbody>
+            <thead>
+                <th>Team</th>
+                <th>W-L</th>
+                <th>W%</th>
+                <th>Conference</th>
+                <th>Home</th>
+                <th>Away</th>
+                <th>GB</th>
+                <th>PS/G</th>
+                <th>PA/G</th>
+                <th>SRS</th>
+            </thead>
+            <tbody>
+                {% for index, row in conference.iterrows() %}
+                <tr>
+                    <td><a href="/team/{{ row['team_id'] }}"><img src="../static/logos/{{ row['team_id'] }}.png"
+                                alt="{{ row['team_id'] }} Logo not available" class="img-fluid mt-5"></a></td>
+                    <td>{{ row['W'] }}-{{ row['L'] }}</td>
+                    <td>{{ row['W%'] }}</td>
+                    <td>{{ row['conf_wins'] }}-{{ row['conf_losses'] }}</td>
+                    <td>{{ row['home_wins'] }}-{{ row['home_losses'] }}</td>
+                    <td>{{ row['visitor_wins'] }}-{{ row['visitor_losses'] }}</td>
+                    <td>{{ row['GB'] }}</td>
+                    <td>{{ row['PS/G'] }}</td>
+                    <td>{{ row['PA/G'] }}</td>
+                    <th>{{ row['SRS'] }}</th>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 

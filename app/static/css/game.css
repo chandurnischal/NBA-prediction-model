@@ -38,9 +38,18 @@ th, td {
     padding: 20px;
 }
 
-.match-ups {
-    flex: 1;
-    border: 10px solid #000;
-    padding: 10px;
-    box-sizing: border-box;
+.tile-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.tile {
+    width: 25rem;
+    height: 15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }

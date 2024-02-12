@@ -239,7 +239,7 @@ def team(team_id):
     history = u.getTeamHistory(int(team_id), creds)[::-1]
 
     nextMatchupsQ = '''
-    select date, day, home_id, Home, visitor_id, Visitor from games where (home_id = {} or visitor_id = {}) and Hpoints = '' limit 7
+    select date, day, home_id, home, visitor_id, visitor from games where (home_id = {} or visitor_id = {}) and Hpoints = '' limit 5
     '''.format(team_id, team_id)
 
     nextMatchups = u.sqlTodf(nextMatchupsQ, creds)
